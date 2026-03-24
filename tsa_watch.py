@@ -973,7 +973,8 @@ def generate_landing_page(output_dir, airport_stats):
 </head>
 <body>
 <h1>Terminal Watch</h1>
-<p class="subtitle"><b>Last updated: {now_str}</b> &mdash; Crowdsourced TSA wait times from Reddit and Bluesky</p>
+<p style="font-size: 0.85em; color: #555; margin: 4px 0 12px;">Want to support this project? <a href="https://donate.stripe.com/3cI6oIdl9bhKcLG7MI6AM00" target="_blank" style="color: #0066cc;">Make a donation of any size.</a></p>
+<p class="subtitle"><b>Last updated: {now_str}</b> &mdash; Crowdsourced TSA wait times from Reddit, Bluesky, and Twitter</p>
 <div class="grid">
 {"".join(cards)}
 </div>
