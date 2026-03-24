@@ -201,9 +201,10 @@ def llm_generate_summary(posts, airport_code, terminal=None):
     if not posts:
         return "<p>No wait time reports found for this period.</p>"
 
-    # Build context
+    # Build context — sort newest first so LLM sees most recent data first
+    posts_sorted = sorted(posts, key=lambda p: p["timestamp"], reverse=True)
     items = []
-    for p in posts:
+    for p in posts_sorted:
         text = f"{p.get('title', '')} {p.get('body', '')}".strip()
         if len(text) > 500:
             text = text[:500]
@@ -218,8 +219,8 @@ def llm_generate_summary(posts, airport_code, terminal=None):
 
 Write 2-4 short paragraphs in HTML (use <p> tags only, no headings). Be direct and practical:
 
-1. Lead with the bottom line: what should someone expect right now? Give specific time ranges.
-2. Break out by terminal if the data supports it. Note which terminal is better/worse.
+1. Lead with the most recent reports first. The newest data is the most valuable — present it before older data. If the most recent report is from today, lead with that.
+2. Give specific wait time ranges, broken out by terminal if the data supports it.
 3. Note PreCheck vs general line differences if reported.
 4. Note any time-of-day patterns (early morning vs afternoon).
 5. End with a practical recommendation (how early to arrive).
