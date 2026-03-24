@@ -19,10 +19,18 @@ jobs:
         with:
           python-version: '3.12'
 
+      - name: Archive current report
+        run: |
+          mkdir -p archive
+          if [ -f index.html ]; then
+            TIMESTAMP=$(TZ=UTC date +%Y%m%d-%H%M%S)
+            cp index.html "archive/${TIMESTAMP}.html"
+          fi
+
       - name: Generate report
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-        run: python tsa_watch.py LGA --terminal C --hours 72 --html
+        run: python tsa_watch.py LGA --terminal C --hours 72 --html --archive-dir archive
 
       - name: Copy output
         run: cp /tmp/tsa-watch-lga.html index.html
@@ -31,7 +39,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add index.html stats.json
+          git add index.html stats.json archive/
           # Only commit if there are changes
           git diff --staged --quiet || git commit -m "Update TSA wait times $(date -u +%Y-%m-%dT%H:%M:%SZ)"
           git push

@@ -605,7 +605,7 @@ def _print_posts(posts):
     print()
 
 
-def format_html(results, airport_code, terminal=None, summary_html=None):
+def format_html(results, airport_code, terminal=None, summary_html=None, archive_files=None):
     """Format results as a self-contained HTML file grouped by day, then terminal."""
     from html import escape
     from collections import defaultdict
@@ -679,12 +679,35 @@ def format_html(results, airport_code, terminal=None, summary_html=None):
   .post-link {{ font-size: 0.85em; }}
   a {{ color: #0066cc; text-decoration: none; }}
   a:hover {{ text-decoration: underline; }}
+  .archive {{ font-size: 0.85em; color: #888; margin-bottom: 16px; line-height: 1.8; }}
+  .archive-label {{ color: #666; font-weight: 500; }}
+  .archive a {{ color: #888; }}
+  .archive a:hover {{ color: #0066cc; }}
+  .archive .sep {{ color: #ccc; margin: 0 4px; }}
 </style>
 </head>
 <body>
 <h1>TSA Watch: {escape(airport_code)}{escape(focus_label)}</h1>
 <p class="subtitle"><b>Last updated: {now_str}</b> &mdash; {len(results)} reports across {len(sorted_days)} days</p>
 """
+
+    # Archive links
+    if archive_files:
+        from zoneinfo import ZoneInfo as ZI
+        et = ZI("America/New_York")
+        links = []
+        for af in archive_files:
+            # Parse timestamp from filename: archive/YYYYMMDD-HHMMSS.html
+            fname = os.path.basename(af).replace(".html", "")
+            try:
+                ts = datetime.strptime(fname, "%Y%m%d-%H%M%S").replace(tzinfo=timezone.utc)
+                label = ts.astimezone(et).strftime("%b %d, %Y %I:%M %p ET")
+            except ValueError:
+                continue
+            links.append(f'<a href="archive/{os.path.basename(af)}">{label}</a>')
+        if links:
+            sep = '<span class="sep">|</span>'
+            html += f'<div class="archive"><span class="archive-label">Earlier reports:</span> {sep.join(links)}</div>\n'
 
     if summary_html:
         html += f'<div class="summary-box">{summary_html}</div>\n'
@@ -809,6 +832,7 @@ Examples:
     parser.add_argument("--hours", "-H", type=int, default=24, help="Look back N hours (default: 24)")
     parser.add_argument("--json", action="store_true", help="Output raw JSON")
     parser.add_argument("--html", action="store_true", help="Output HTML file and open in browser")
+    parser.add_argument("--archive-dir", help="Directory containing archived prior reports (for linking)")
 
     args = parser.parse_args()
     airport = args.airport.upper()
@@ -872,7 +896,17 @@ Examples:
             text = f"{r['title']} {r['body']}".lower()
             r["detected_terminals"] = _detect_terminal(text) or set()
         summary_html = llm_generate_summary(all_results, airport, args.terminal)
-        html = format_html(all_results, airport, args.terminal, summary_html=summary_html)
+
+        # Collect archive files if archive dir specified
+        archive_files = []
+        if args.archive_dir and os.path.isdir(args.archive_dir):
+            archive_files = sorted(
+                [f for f in os.listdir(args.archive_dir) if f.endswith(".html")],
+                reverse=True,  # most recent first
+            )
+
+        html = format_html(all_results, airport, args.terminal,
+                           summary_html=summary_html, archive_files=archive_files)
         out_path = f"/tmp/tsa-watch-{airport.lower()}.html"
         with open(out_path, "w") as f:
             f.write(html)
