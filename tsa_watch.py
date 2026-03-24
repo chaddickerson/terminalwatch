@@ -52,17 +52,17 @@ SUBREDDITS = [
 
 # Additional subs searched only for the specific airport
 AIRPORT_SUBREDDITS = {
-    "ATL": ["Atlanta"],
+    "ATL": ["Atlanta", "ATLairport"],
     "DFW": ["Dallas", "FortWorth", "dfwarea"],
-    "DEN": ["Denver"],
+    "DEN": ["Denver", "DENairport", "DIA"],
     "ORD": ["chicago", "OHareAirport"],
     "LAX": ["LosAngeles", "LAX"],
     "JFK": ["nyc", "newyorkcity", "JFKAirport"],
-    "CLT": ["Charlotte"],
+    "CLT": ["Charlotte", "CharlotteAirport"],
     "LAS": ["LasVegas", "vegas"],
     "MCO": ["orlando"],
     "MIA": ["Miami"],
-    "LGA": ["nyc", "newyorkcity", "astoria", "Queens"],
+    "LGA": ["nyc", "newyorkcity", "astoria", "Queens", "LGAairport"],
     "EWR": ["newjersey", "Newark"],
     "SFO": ["sanfrancisco", "bayarea"],
     "SEA": ["Seattle"],
