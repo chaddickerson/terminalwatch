@@ -807,23 +807,36 @@ def format_html(results, airport_code, terminal=None, summary_html=None, archive
 <p class="subtitle"><b>Last updated: {now_str}</b> &mdash; {len(results)} reports across {len(sorted_days)} days</p>
 """
 
-    # Archive links
+    # Archive links — last 24 hours only, grouped by date
     if archive_files:
         from zoneinfo import ZoneInfo as ZI
         et = ZI("America/New_York")
-        links = []
+        cutoff = datetime.now(timezone.utc) - timedelta(hours=24)
+        # Parse and filter to last 24 hours
+        parsed = []
         for af in archive_files:
-            # Parse timestamp from filename: archive/YYYYMMDD-HHMMSS.html
             fname = os.path.basename(af).replace(".html", "")
             try:
                 ts = datetime.strptime(fname, "%Y%m%d-%H%M%S").replace(tzinfo=timezone.utc)
-                label = ts.astimezone(et).strftime("%b %d, %Y %I:%M %p ET")
             except ValueError:
                 continue
-            links.append(f'<a href="archive/{os.path.basename(af)}">{label}</a>')
-        if links:
+            if ts >= cutoff:
+                parsed.append((ts, af))
+        if parsed:
+            # Group by date (in ET), most recent date first
+            from collections import OrderedDict
+            by_date = OrderedDict()
+            for ts, af in sorted(parsed, key=lambda x: x[0], reverse=True):
+                ts_et = ts.astimezone(et)
+                date_label = ts_et.strftime("%b %-d")
+                time_label = ts_et.strftime("%-I:%M %p")
+                link = f'<a href="archive/{os.path.basename(af)}">{time_label}</a>'
+                by_date.setdefault(date_label, []).append(link)
             sep = '<span class="sep">|</span>'
-            html += f'<div class="archive"><span class="archive-label">Earlier reports:</span> {sep.join(links)}</div>\n'
+            lines = []
+            for date_label, time_links in by_date.items():
+                lines.append(f'<span class="archive-label">{date_label}:</span> {sep.join(time_links)}')
+            html += f'<div class="archive">{"<br>".join(lines)}</div>\n'
 
     if summary_html:
         html += f'<div class="summary-box">{summary_html}</div>\n'
@@ -979,7 +992,7 @@ def generate_landing_page(output_dir, airport_stats):
 <div class="grid">
 {"".join(cards)}
 </div>
-<div class="footer">Updated hourly. Data sourced from public social media posts.</div>
+<div class="footer">Updated hourly. Data sourced from public social media posts. <a href="/about/" style="color: #0066cc;">About this project</a></div>
 </body>
 </html>"""
 
