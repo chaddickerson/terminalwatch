@@ -803,10 +803,10 @@ def format_html(results, airport_code, terminal=None, summary_html=None, archive
   .post-source.bluesky {{ background: #0085ff; color: #fff; }}
   .post-source.twitter {{ background: #000; color: #fff; }}
   .post-handle {{ font-size: 0.8em; color: #666; margin-left: 4px; }}
-  .post-score {{ color: #888; font-size: 0.85em; }}
+  .post-profile {{ font-size: 0.9em; color: #888; }}
   .post-text {{ margin: 4px 0; }}
   .post-wait {{ background: #fff3cd; border-radius: 4px; padding: 2px 8px; font-size: 0.9em; font-weight: 500; display: inline-block; margin-top: 2px; }}
-  .post-link {{ font-size: 0.85em; }}
+  .post-link {{ font-size: 0.85em; color: #888; }}
   a {{ color: #0066cc; text-decoration: none; }}
   a:hover {{ text-decoration: underline; }}
   .archive {{ font-size: 0.85em; color: #888; margin-bottom: 16px; line-height: 1.8; }}
@@ -946,19 +946,28 @@ def _html_posts(posts):
         if wait_times:
             wait_html = f' <span class="post-wait">⏱️ {", ".join(str(t) + "m" for t in wait_times)}</span>'
 
-        score_html = ""
-        if r["score"] > 0:
-            score_html = f' <span class="post-score">({r["score"]}↑)</span>'
-
-        # Show @handle next to badge for Bluesky and Twitter
+        # Build profile link and handle display
         handle_html = ""
-        if r["source"] in ("bluesky", "twitter") and r.get("subreddit", "").startswith("@"):
-            handle_html = f' <span class="post-handle">{escape(r["subreddit"])}</span>'
+        sub = r.get("subreddit", "")
+        if r["source"] == "bluesky" and sub.startswith("@"):
+            handle = sub[1:]  # strip @
+            profile_url = f"https://bsky.app/profile/{handle}"
+            handle_html = f' <span class="post-handle">{escape(sub)} <a href="{escape(profile_url)}" target="_blank" class="post-profile">(profile)</a></span>'
+        elif r["source"] == "twitter" and sub.startswith("@"):
+            handle = sub[1:]
+            profile_url = f"https://x.com/{handle}"
+            handle_html = f' <span class="post-handle">{escape(sub)} <a href="{escape(profile_url)}" target="_blank" class="post-profile">(profile)</a></span>'
+        elif r["source"] == "reddit" and sub.startswith("r/"):
+            profile_url = f"https://reddit.com/{sub}"
+            handle_html = f' <span class="post-handle">{escape(sub)} <a href="{escape(profile_url)}" target="_blank" class="post-profile">(profile)</a></span>'
+
+        # Post link goes at end of text, before wait time
+        link_html = f' <a href="{escape(r["url"])}" target="_blank" class="post-link">(link)</a>'
 
         html += f"""<div class="post">
 <span class="post-time">{escape(time_str)}</span>
-<a href="{escape(r['url'])}" target="_blank" class="post-source {source_cls}">{escape(source.upper())}</a>{handle_html}{score_html}
-<div class="post-text">{escape(summary)}{wait_html}</div>
+<span class="post-source {source_cls}">{escape(source.upper())}</span>{handle_html}
+<div class="post-text">{escape(summary)}{link_html}{wait_html}</div>
 </div>
 """
     return html
