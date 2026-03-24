@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Left wing -->
+  <path d="M8 32 Q2 28 1 22 Q4 24 14 26 Q10 28 8 32Z" fill="#0066cc" opacity="0.8"/>
+  <path d="M10 34 Q4 32 2 28 Q6 29 14 30 Q12 32 10 34Z" fill="#0066cc" opacity="0.6"/>
+  <!-- Right wing -->
+  <path d="M56 32 Q62 28 63 22 Q60 24 50 26 Q54 28 56 32Z" fill="#0066cc" opacity="0.8"/>
+  <path d="M54 34 Q60 32 62 28 Q58 29 50 30 Q52 32 54 34Z" fill="#0066cc" opacity="0.6"/>
+  <!-- Clock face -->
+  <circle cx="32" cy="32" r="16" fill="white" stroke="#1a1a1a" stroke-width="2.5"/>
+  <!-- Hour markers -->
+  <line x1="32" y1="18" x2="32" y2="21" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round"/>
+  <line x1="32" y1="43" x2="32" y2="46" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round"/>
+  <line x1="18" y1="32" x2="21" y2="32" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round"/>
+  <line x1="43" y1="32" x2="46" y2="32" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round"/>
+  <!-- Hour hand (pointing to ~10) -->
+  <line x1="32" y1="32" x2="26" y2="23" stroke="#1a1a1a" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Minute hand (pointing to ~2) -->
+  <line x1="32" y1="32" x2="39" y2="22" stroke="#0066cc" stroke-width="2" stroke-linecap="round"/>
+  <!-- Center dot -->
+  <circle cx="32" cy="32" r="2" fill="#1a1a1a"/>
+</svg>

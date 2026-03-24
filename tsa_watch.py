@@ -246,23 +246,26 @@ def llm_generate_summary(posts, airport_code, terminal=None):
         terminal_info = ""
         if p.get("detected_terminals"):
             terminal_info = f" [Terminal {', '.join(p['detected_terminals'])}]"
-        items.append(f"[{ts.strftime('%a %b %d %I:%M %p ET')}]{terminal_info} {text}")
+        source = p.get("source", "unknown").capitalize()
+        url = p.get("url", "")
+        items.append(f"[{source}: {ts.strftime('%a %b %d, %I:%M %p ET')}]({url}){terminal_info} {text}")
 
     terminal_note = f" Terminal {terminal.upper()}" if terminal else ""
     prompt = f"""You are writing a brief summary of TSA wait time reports at {airport_code}{terminal_note} for a traveler.
 
-Write 2-4 short paragraphs in HTML (use <p> tags only, no headings). Be direct and practical:
+Write in HTML (use <p> tags only, no headings). Structure the summary as follows:
 
-1. Lead with the most recent reports first. The newest data is the most valuable — present it before older data. If the most recent report is from today, lead with that.
-2. Give specific wait time ranges, broken out by terminal if the data supports it.
-3. Note PreCheck vs general line differences if reported.
-4. Note any time-of-day patterns (early morning vs afternoon).
-5. End with a practical recommendation (how early to arrive).
+1. **Terminal-specific data first.** Group reports by terminal (e.g., Terminal B, Terminal 1). Within each terminal group, present the most recent reports first — newest data is the most valuable. Include specific wait times and note differences between PreCheck, CLEAR, and regular lines when reported.
 
-IMPORTANT: Every time you reference a report or data point, include the specific day and time in parentheses. Never use relative terms like "this morning," "recent," "earlier today," or "yesterday" without also stating the exact date and time. Examples:
-- "Terminal B waits hit 2 hours (Tue Mar 24, 6:08 AM)"
-- "PreCheck was 20 minutes (Sun Mar 22, 1:51 PM)"
-- "Reports from Sunday afternoon through Tuesday morning (Sun Mar 22 1 PM – Tue Mar 24 7 AM) show..."
+2. **General (non-terminal-specific) reports next.** After the terminal-specific paragraphs, add a separate paragraph for any reports that don't mention a specific terminal. Again, newest first.
+
+3. **Practical recommendations last.** End with a short recommendation on how early to arrive. Make it terminal-specific if the data supports it (e.g., "Terminal C lines are moving faster than Terminal B"). Note any differences between PreCheck/CLEAR and regular lines in your recommendation.
+
+Within all sections, always present newer information before older information.
+
+IMPORTANT: Every time you reference a report or data point, include the source name and time in parentheses, with the source name linked to the original post URL. The input data is formatted as [Source: Day Mon DD, HH:MM AM/PM ET](url). Use this to build linked citations. Never use relative terms like "this morning," "recent," "earlier today," or "yesterday" without also stating the exact date and time. Examples:
+- "Terminal B waits hit 2 hours (<a href="https://reddit.com/..." target="_blank">Reddit</a>: Tue Mar 24, 6:08 AM)"
+- "PreCheck was 20 minutes (<a href="https://bsky.app/..." target="_blank">Bluesky</a>: Sun Mar 22, 1:51 PM)"
 
 Be concise. Use bold (<b>) for key numbers. Do not editorialize about politics or TSA funding — just report what travelers are seeing on the ground."""
 
@@ -767,6 +770,7 @@ def format_html(results, airport_code, terminal=None, summary_html=None, archive
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <title>TSA Watch: {airport_code}{focus_label}</title>
 <style>
   body {{ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 720px; margin: 0 auto; padding: 20px; background: #f8f9fa; color: #1a1a1a; }}
@@ -784,7 +788,8 @@ def format_html(results, airport_code, terminal=None, summary_html=None, archive
   .post {{ padding: 8px 0; border-bottom: 1px solid #eee; }}
   .post:last-child {{ border-bottom: none; }}
   .post-time {{ font-weight: 600; color: #333; }}
-  .post-source {{ display: inline-block; background: #e9ecef; border-radius: 3px; padding: 1px 6px; font-size: 0.8em; color: #555; margin-left: 4px; }}
+  .post-source {{ display: inline-block; background: #e9ecef; border-radius: 3px; padding: 1px 6px; font-size: 0.8em; color: #555; margin-left: 4px; text-decoration: none; }}
+  .post-source:hover {{ opacity: 0.85; text-decoration: none; }}
   .post-source.reddit {{ background: #ff4500; color: #fff; }}
   .post-source.bluesky {{ background: #0085ff; color: #fff; }}
   .post-source.twitter {{ background: #000; color: #fff; }}
@@ -937,9 +942,8 @@ def _html_posts(posts):
 
         html += f"""<div class="post">
 <span class="post-time">{escape(time_str)}</span>
-<span class="post-source {source_cls}">{escape(source.upper())}</span>{score_html}
+<a href="{escape(r['url'])}" target="_blank" class="post-source {source_cls}">{escape(source.upper())}</a>{score_html}
 <div class="post-text">{escape(summary)}{wait_html}</div>
-<div class="post-link"><a href="{escape(r['url'])}" target="_blank">{escape(r['url'])}</a></div>
 </div>
 """
     return html
@@ -970,6 +974,7 @@ def generate_landing_page(output_dir, airport_stats):
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <title>Terminal Watch — Crowdsourced TSA Wait Times</title>
 <style>
   body {{ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; background: #f8f9fa; color: #1a1a1a; }}
