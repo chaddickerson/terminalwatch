@@ -37,14 +37,19 @@ AIRPORT_NAMES = {
 
 # Subreddits searched for every airport
 SUBREDDITS = [
-    "TSA", "delta", "flying", "americanairlines", "unitedairlines",
-    "travel", "airports", "jetblue", "spiritair", "SouthwestAirlines",
+    # TSA / security
+    "TSA", "tsaprecheck", "GlobalEntry",
+    # Airlines
+    "delta", "americanairlines", "unitedairlines", "jetblue",
+    "SouthwestAirlines", "AlaskaAirlines", "FrontierAirlines", "spiritair",
+    # General travel/flying
+    "flying", "Flights", "travel", "airports",
 ]
 
 # Additional subs searched only for the specific airport
 AIRPORT_SUBREDDITS = {
-    "LGA": ["nyc", "newyorkcity"],
-    "JFK": ["nyc", "newyorkcity", "JFKAirport"],
+    "LGA": ["nyc", "newyorkcity", "astoria", "Queens"],
+    "JFK": ["nyc", "newyorkcity", "JFKAirport", "Queens"],
     "EWR": ["newjersey", "Newark"],
     "ORD": ["chicago", "OHareAirport"],
     "LAX": ["LosAngeles", "LAX"],
