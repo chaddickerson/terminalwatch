@@ -20,18 +20,22 @@ from datetime import datetime, timezone, timedelta
 
 # Common airport name mappings for search broadening
 AIRPORT_NAMES = {
-    "LGA": ["LaGuardia", "La Guardia", "LGA"],
-    "JFK": ["JFK", "Kennedy", "John F Kennedy"],
-    "EWR": ["Newark", "EWR", "Newark Liberty"],
+    "ATL": ["ATL", "Atlanta", "Hartsfield"],
+    "DFW": ["DFW", "Dallas Fort Worth", "DFW Airport"],
+    "DEN": ["DEN", "Denver", "Denver International"],
     "ORD": ["O'Hare", "OHare", "ORD"],
     "LAX": ["LAX", "Los Angeles"],
+    "JFK": ["JFK", "Kennedy", "John F Kennedy"],
+    "CLT": ["CLT", "Charlotte", "Charlotte Douglas"],
+    "LAS": ["LAS", "Las Vegas", "Harry Reid"],
+    "MCO": ["MCO", "Orlando", "Orlando International"],
+    "MIA": ["MIA", "Miami"],
+    "LGA": ["LaGuardia", "La Guardia", "LGA"],
+    "EWR": ["Newark", "EWR", "Newark Liberty"],
+    # Additional airports (for local/manual use)
     "SFO": ["SFO", "San Francisco"],
-    "ATL": ["ATL", "Atlanta", "Hartsfield"],
-    "DFW": ["DFW", "Dallas"],
-    "DEN": ["DEN", "Denver"],
     "SEA": ["SEA", "Seattle", "SeaTac"],
     "BOS": ["BOS", "Boston", "Logan"],
-    "MIA": ["MIA", "Miami"],
     "TYS": ["TYS", "Knoxville", "McGhee Tyson"],
 }
 
@@ -48,19 +52,41 @@ SUBREDDITS = [
 
 # Additional subs searched only for the specific airport
 AIRPORT_SUBREDDITS = {
-    "LGA": ["nyc", "newyorkcity", "astoria", "Queens"],
-    "JFK": ["nyc", "newyorkcity", "JFKAirport", "Queens"],
-    "EWR": ["newjersey", "Newark"],
+    "ATL": ["Atlanta"],
+    "DFW": ["Dallas", "FortWorth", "dfwarea"],
+    "DEN": ["Denver"],
     "ORD": ["chicago", "OHareAirport"],
     "LAX": ["LosAngeles", "LAX"],
+    "JFK": ["nyc", "newyorkcity", "JFKAirport"],
+    "CLT": ["Charlotte"],
+    "LAS": ["LasVegas", "vegas"],
+    "MCO": ["orlando"],
+    "MIA": ["Miami"],
+    "LGA": ["nyc", "newyorkcity", "astoria", "Queens"],
+    "EWR": ["newjersey", "Newark"],
     "SFO": ["sanfrancisco", "bayarea"],
-    "ATL": ["Atlanta"],
-    "DFW": ["Dallas", "FortWorth"],
-    "DEN": ["Denver"],
     "SEA": ["Seattle"],
     "BOS": ["boston"],
-    "MIA": ["Miami"],
 }
+
+# Full display names for landing page
+AIRPORT_DISPLAY = {
+    "ATL": "Atlanta (Hartsfield-Jackson)",
+    "DFW": "Dallas/Fort Worth",
+    "DEN": "Denver International",
+    "ORD": "Chicago O'Hare",
+    "LAX": "Los Angeles (LAX)",
+    "JFK": "New York JFK",
+    "CLT": "Charlotte Douglas",
+    "LAS": "Las Vegas (Harry Reid)",
+    "MCO": "Orlando International",
+    "MIA": "Miami International",
+    "LGA": "New York LaGuardia",
+    "EWR": "Newark Liberty",
+}
+
+# Default set of airports for multi-airport mode
+DEFAULT_AIRPORTS = ["ATL", "DFW", "DEN", "ORD", "LAX", "JFK", "CLT", "LAS", "MCO", "MIA", "LGA", "EWR"]
 
 # Patterns used for extracting explicit wait times from text (for display only)
 WAIT_TIME_PATTERNS = [
@@ -687,6 +713,7 @@ def format_html(results, airport_code, terminal=None, summary_html=None, archive
 </style>
 </head>
 <body>
+<p style="margin-bottom:4px"><a href="../">&larr; All airports</a></p>
 <h1>TSA Watch: {escape(airport_code)}{escape(focus_label)}</h1>
 <p class="subtitle"><b>Last updated: {now_str}</b> &mdash; {len(results)} reports across {len(sorted_days)} days</p>
 """
@@ -816,104 +843,238 @@ def _html_posts(posts):
     return html
 
 
+def generate_landing_page(output_dir, airport_stats):
+    """Generate the index.html landing page linking to all airport pages."""
+    from html import escape
+    from zoneinfo import ZoneInfo
+    eastern = ZoneInfo("America/New_York")
+    now_str = datetime.now(eastern).strftime("%b %d, %Y %I:%M %p ET")
+
+    cards = []
+    for code in DEFAULT_AIRPORTS:
+        display = AIRPORT_DISPLAY.get(code, code)
+        stats = airport_stats.get(code, {})
+        report_count = stats.get("after_llm_filter", 0)
+        badge = f"{report_count} reports" if report_count else "no reports"
+
+        cards.append(f"""<a href="{code.lower()}/index.html" class="card">
+<div class="card-code">{escape(code)}</div>
+<div class="card-name">{escape(display)}</div>
+<div class="card-badge">{escape(badge)}</div>
+</a>""")
+
+    html = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Terminal Watch — Crowdsourced TSA Wait Times</title>
+<style>
+  body {{ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; background: #f8f9fa; color: #1a1a1a; }}
+  h1 {{ margin-bottom: 4px; }}
+  .subtitle {{ color: #666; margin-bottom: 24px; }}
+  .grid {{ display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }}
+  .card {{ display: block; background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 16px; text-decoration: none; color: inherit; transition: border-color 0.15s; }}
+  .card:hover {{ border-color: #0066cc; }}
+  .card-code {{ font-size: 1.6em; font-weight: 700; color: #1a1a1a; }}
+  .card-name {{ font-size: 0.9em; color: #555; margin: 4px 0 8px; }}
+  .card-badge {{ font-size: 0.8em; color: #888; background: #f0f0f0; display: inline-block; padding: 2px 8px; border-radius: 3px; }}
+  .footer {{ margin-top: 32px; font-size: 0.85em; color: #999; }}
+</style>
+</head>
+<body>
+<h1>Terminal Watch</h1>
+<p class="subtitle"><b>Last updated: {now_str}</b> &mdash; Crowdsourced TSA wait times from Reddit and Bluesky</p>
+<div class="grid">
+{"".join(cards)}
+</div>
+<div class="footer">Updated hourly. Data sourced from public social media posts.</div>
+</body>
+</html>"""
+
+    out_path = os.path.join(output_dir, "index.html")
+    with open(out_path, "w") as f:
+        f.write(html)
+    print(f"  Wrote landing page: {out_path}", file=sys.stderr)
+
+
+def run_single_airport(airport, terminal, hours, output_dir=None, archive_base=None):
+    """Run the full pipeline for one airport. Returns stats dict."""
+    import time
+
+    print(f"\n{'='*60}", file=sys.stderr)
+    print(f"  {airport}" +
+          (f" Terminal {terminal.upper()}" if terminal else "") +
+          f" (last {hours}h)", file=sys.stderr)
+    print(f"{'='*60}", file=sys.stderr)
+
+    stats = {
+        "airport": airport,
+        "last_run": datetime.now(timezone.utc).isoformat(),
+    }
+
+    print("  Searching Reddit posts...", file=sys.stderr)
+    reddit_posts = search_reddit(airport, terminal, hours)
+    stats["reddit_posts"] = len(reddit_posts)
+
+    print("  Searching Reddit comments...", file=sys.stderr)
+    reddit_comments = search_reddit_comments(airport, terminal, hours)
+    stats["reddit_comments"] = len(reddit_comments)
+
+    print("  Searching Bluesky...", file=sys.stderr)
+    bluesky_posts = search_bluesky(airport, terminal, hours)
+    stats["bluesky"] = len(bluesky_posts)
+
+    all_results = reddit_posts + reddit_comments + bluesky_posts
+    stats["total_raw"] = len(all_results)
+
+    print(f"  Found {len(all_results)} total "
+          f"(reddit: {stats['reddit_posts']}+{stats['reddit_comments']}, "
+          f"bluesky: {stats['bluesky']})", file=sys.stderr)
+
+    # LLM filter
+    print("  Filtering with LLM...", file=sys.stderr)
+    all_results = llm_filter_posts(all_results, airport, terminal)
+    stats["after_llm_filter"] = len(all_results)
+
+    if output_dir:
+        # Generate HTML
+        print("  Generating summary...", file=sys.stderr)
+        for r in all_results:
+            text = f"{r['title']} {r['body']}".lower()
+            r["detected_terminals"] = _detect_terminal(text) or set()
+        summary_html = llm_generate_summary(all_results, airport, terminal)
+
+        # Collect archive files
+        archive_files = []
+        airport_archive = os.path.join(archive_base or output_dir, "archive") if archive_base else None
+        if airport_archive and os.path.isdir(airport_archive):
+            archive_files = sorted(
+                [f for f in os.listdir(airport_archive) if f.endswith(".html")],
+                reverse=True,
+            )
+
+        html = format_html(all_results, airport, terminal,
+                           summary_html=summary_html, archive_files=archive_files)
+
+        # Write to airport subdirectory
+        airport_dir = os.path.join(output_dir, airport.lower())
+        os.makedirs(airport_dir, exist_ok=True)
+        out_path = os.path.join(airport_dir, "index.html")
+        with open(out_path, "w") as f:
+            f.write(html)
+        print(f"  Wrote {out_path}", file=sys.stderr)
+    else:
+        format_results(all_results, airport, terminal)
+
+    return stats
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="Monitor TSA wait times from social media",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  python3 scripts/tsa_watch.py LGA --terminal C --hours 24
-  python3 scripts/tsa_watch.py JFK --hours 12
-  python3 scripts/tsa_watch.py LGA --terminal C --hours 48 --html
+  python3 tsa_watch.py LGA --terminal C --hours 24
+  python3 tsa_watch.py JFK --hours 12 --html
+  python3 tsa_watch.py --multi --output-dir /tmp/terminalwatch --hours 72
         """,
     )
-    parser.add_argument("airport", help="Airport code (e.g., LGA, JFK, ORD)")
+    parser.add_argument("airport", nargs="?", help="Airport code (e.g., LGA, JFK, ORD). Omit with --multi.")
     parser.add_argument("--terminal", "-t", help="Terminal letter/number (e.g., C, 1)")
-    parser.add_argument("--hours", "-H", type=int, default=24, help="Look back N hours (default: 24)")
+    parser.add_argument("--hours", "-H", type=int, default=72, help="Look back N hours (default: 72)")
     parser.add_argument("--json", action="store_true", help="Output raw JSON")
     parser.add_argument("--html", action="store_true", help="Output HTML file and open in browser")
-    parser.add_argument("--archive-dir", help="Directory containing archived prior reports (for linking)")
+    parser.add_argument("--multi", action="store_true", help="Run all default airports, generate site")
+    parser.add_argument("--output-dir", help="Output directory for --multi mode (required with --multi)")
+    parser.add_argument("--archive-dir", help="Base archive directory (for --multi, archives are per-airport)")
 
     args = parser.parse_args()
-    airport = args.airport.upper()
 
-    print(f"Searching for TSA reports at {airport}" +
-          (f" Terminal {args.terminal.upper()}" if args.terminal else "") +
-          f" (last {args.hours}h)...", file=sys.stderr)
+    if args.multi:
+        if not args.output_dir:
+            print("Error: --output-dir is required with --multi", file=sys.stderr)
+            sys.exit(1)
 
-    # Gather from all sources, tracking counts
-    stats = {"last_run": datetime.now(timezone.utc).isoformat()}
+        os.makedirs(args.output_dir, exist_ok=True)
+        all_stats = {}
 
-    print("  Searching Reddit posts...", file=sys.stderr)
-    reddit_posts = search_reddit(airport, args.terminal, args.hours)
-    stats["reddit_posts"] = len(reddit_posts)
+        for airport in DEFAULT_AIRPORTS:
+            # Set up per-airport archive dir
+            airport_archive = None
+            if args.archive_dir:
+                airport_archive = os.path.join(args.archive_dir, airport.lower())
 
-    print("  Searching Reddit comments...", file=sys.stderr)
-    reddit_comments = search_reddit_comments(airport, args.terminal, args.hours)
-    stats["reddit_comments"] = len(reddit_comments)
-
-    print("  Searching Bluesky...", file=sys.stderr)
-    bluesky_posts = search_bluesky(airport, args.terminal, args.hours)
-    stats["bluesky"] = len(bluesky_posts)
-
-    all_results = reddit_posts + reddit_comments + bluesky_posts
-    stats["total_raw"] = len(all_results)
-
-    print(f"  Found {len(all_results)} total reports "
-          f"(reddit posts: {stats['reddit_posts']}, "
-          f"reddit comments: {stats['reddit_comments']}, "
-          f"bluesky: {stats['bluesky']}).", file=sys.stderr)
-
-    if args.json:
-        print(json.dumps(all_results, indent=2))
-        return
-
-    # LLM filter: keep only posts with actionable wait time info
-    print("  Filtering with LLM...", file=sys.stderr)
-    all_results = llm_filter_posts(all_results, airport, args.terminal)
-    stats["after_llm_filter"] = len(all_results)
-
-    # Write stats
-    stats_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "stats.json")
-    # Also check for stats.json in cwd (for GitHub Actions where script is in repo root)
-    if not os.path.exists(os.path.dirname(stats_path)):
-        stats_path = "stats.json"
-    try:
-        with open(stats_path, "w") as f:
-            json.dump(stats, f, indent=2)
-        print(f"  Wrote {stats_path}", file=sys.stderr)
-    except OSError:
-        # Try cwd as fallback
-        with open("stats.json", "w") as f:
-            json.dump(stats, f, indent=2)
-        print("  Wrote stats.json", file=sys.stderr)
-
-    if args.html:
-        # Generate LLM summary
-        print("  Generating summary...", file=sys.stderr)
-        # Need to detect terminals before summary (summary uses them)
-        for r in all_results:
-            text = f"{r['title']} {r['body']}".lower()
-            r["detected_terminals"] = _detect_terminal(text) or set()
-        summary_html = llm_generate_summary(all_results, airport, args.terminal)
-
-        # Collect archive files if archive dir specified
-        archive_files = []
-        if args.archive_dir and os.path.isdir(args.archive_dir):
-            archive_files = sorted(
-                [f for f in os.listdir(args.archive_dir) if f.endswith(".html")],
-                reverse=True,  # most recent first
+            stats = run_single_airport(
+                airport=airport,
+                terminal=None,  # no terminal focus in multi mode
+                hours=args.hours,
+                output_dir=args.output_dir,
+                archive_base=airport_archive,
             )
+            all_stats[airport] = stats
 
-        html = format_html(all_results, airport, args.terminal,
-                           summary_html=summary_html, archive_files=archive_files)
-        out_path = f"/tmp/tsa-watch-{airport.lower()}.html"
-        with open(out_path, "w") as f:
-            f.write(html)
-        print(f"  Wrote {out_path}", file=sys.stderr)
-        subprocess.run(["open", out_path])
+        # Generate landing page
+        generate_landing_page(args.output_dir, all_stats)
+
+        # Write combined stats
+        combined_stats = {
+            "last_run": datetime.now(timezone.utc).isoformat(),
+            "airports": all_stats,
+        }
+        stats_path = os.path.join(args.output_dir, "stats.json")
+        with open(stats_path, "w") as f:
+            json.dump(combined_stats, f, indent=2)
+        print(f"\n  Wrote {stats_path}", file=sys.stderr)
+        print(f"  Done: {len(DEFAULT_AIRPORTS)} airports processed.", file=sys.stderr)
+
+    elif args.airport:
+        airport = args.airport.upper()
+
+        if args.json:
+            # JSON mode: gather and dump, no LLM
+            print(f"Searching for TSA reports at {airport}...", file=sys.stderr)
+            all_results = []
+            all_results.extend(search_reddit(airport, args.terminal, args.hours))
+            all_results.extend(search_reddit_comments(airport, args.terminal, args.hours))
+            all_results.extend(search_bluesky(airport, args.terminal, args.hours))
+            print(json.dumps(all_results, indent=2))
+        elif args.html:
+            # Single airport HTML
+            archive_dir = args.archive_dir
+            archive_files = []
+            if archive_dir and os.path.isdir(archive_dir):
+                archive_files = sorted(
+                    [f for f in os.listdir(archive_dir) if f.endswith(".html")],
+                    reverse=True,
+                )
+
+            stats = run_single_airport(airport, args.terminal, args.hours,
+                                       output_dir="/tmp", archive_base=args.archive_dir)
+
+            # Move from /tmp/{code}/index.html to /tmp/tsa-watch-{code}.html for compat
+            src = f"/tmp/{airport.lower()}/index.html"
+            dst = f"/tmp/tsa-watch-{airport.lower()}.html"
+            if os.path.exists(src):
+                import shutil
+                shutil.copy2(src, dst)
+                print(f"  Copied to {dst}", file=sys.stderr)
+
+            # Write stats
+            try:
+                with open("stats.json", "w") as f:
+                    json.dump(stats, f, indent=2)
+            except OSError:
+                pass
+
+            subprocess.run(["open", dst])
+        else:
+            # Text mode
+            run_single_airport(airport, args.terminal, args.hours)
     else:
-        format_results(all_results, airport, args.terminal)
+        parser.print_help()
+        sys.exit(1)
 
 
 if __name__ == "__main__":
