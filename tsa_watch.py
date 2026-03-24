@@ -18,6 +18,12 @@ import urllib.parse
 import urllib.error
 from datetime import datetime, timezone, timedelta
 
+def _eastern():
+    """Return the US/Eastern timezone."""
+    from zoneinfo import ZoneInfo
+    return ZoneInfo("America/New_York")
+
+
 # Common airport name mappings for search broadening
 AIRPORT_NAMES = {
     "ATL": ["ATL", "Atlanta", "Hartsfield"],
@@ -228,17 +234,19 @@ def llm_generate_summary(posts, airport_code, terminal=None):
         return "<p>No wait time reports found for this period.</p>"
 
     # Build context — sort newest first so LLM sees most recent data first
+    from zoneinfo import ZoneInfo
+    eastern = ZoneInfo("America/New_York")
     posts_sorted = sorted(posts, key=lambda p: p["timestamp"], reverse=True)
     items = []
     for p in posts_sorted:
         text = f"{p.get('title', '')} {p.get('body', '')}".strip()
         if len(text) > 500:
             text = text[:500]
-        ts = datetime.fromisoformat(p["timestamp"]).astimezone()
+        ts = datetime.fromisoformat(p["timestamp"]).astimezone(eastern)
         terminal_info = ""
         if p.get("detected_terminals"):
             terminal_info = f" [Terminal {', '.join(p['detected_terminals'])}]"
-        items.append(f"[{ts.strftime('%a %b %d %I:%M %p')}]{terminal_info} {text}")
+        items.append(f"[{ts.strftime('%a %b %d %I:%M %p ET')}]{terminal_info} {text}")
 
     terminal_note = f" Terminal {terminal.upper()}" if terminal else ""
     prompt = f"""You are writing a brief summary of TSA wait time reports at {airport_code}{terminal_note} for a traveler.
@@ -332,7 +340,7 @@ def search_reddit(airport_code, terminal=None, hours=24):
                     "body": body[:500] if body else "",
                     "url": f"https://reddit.com{p.get('permalink', '')}",
                     "timestamp": created.isoformat(),
-                    "timestamp_local": created.astimezone().strftime("%a %b %d %I:%M %p"),
+                    "timestamp_local": created.astimezone(_eastern()).strftime("%a %b %d %I:%M %p"),
                     "score": p.get("score", 0),
                     "num_comments": p.get("num_comments", 0),
                     "relevance": 0,
@@ -386,7 +394,7 @@ def search_reddit_comments(airport_code, terminal=None, hours=24):
                 "body": body[:500],
                 "url": f"https://reddit.com{permalink}" if permalink else "",
                 "timestamp": created.isoformat(),
-                "timestamp_local": created.astimezone().strftime("%a %b %d %I:%M %p"),
+                "timestamp_local": created.astimezone(_eastern()).strftime("%a %b %d %I:%M %p"),
                 "score": c.get("score", 0),
                 "num_comments": 0,
                 "relevance": 0,
@@ -448,7 +456,7 @@ def search_bluesky(airport_code, terminal=None, hours=24):
                 "body": text[:500],
                 "url": web_url,
                 "timestamp": created.isoformat(),
-                "timestamp_local": created.astimezone().strftime("%a %b %d %I:%M %p"),
+                "timestamp_local": created.astimezone(_eastern()).strftime("%a %b %d %I:%M %p"),
                 "score": post.get("likeCount", 0),
                 "num_comments": post.get("replyCount", 0),
                 "relevance": 0,
@@ -608,7 +616,7 @@ def _print_posts(posts):
     """Print a list of posts with URLs."""
     for r in posts:
         source_tag = r["source"].upper().replace("_", " ")
-        time_str = datetime.fromisoformat(r["timestamp"]).astimezone().strftime("%I:%M %p")
+        time_str = datetime.fromisoformat(r["timestamp"]).astimezone(_eastern()).strftime("%I:%M %p")
 
         # Build one-line summary
         if r["source"] == "reddit" and r["title"]:
@@ -816,7 +824,7 @@ def _html_posts(posts):
     for r in posts:
         source = r["source"].replace("_", " ")
         source_cls = "reddit" if "reddit" in r["source"] else "bluesky"
-        time_str = datetime.fromisoformat(r["timestamp"]).astimezone().strftime("%I:%M %p")
+        time_str = datetime.fromisoformat(r["timestamp"]).astimezone(_eastern()).strftime("%I:%M %p")
 
         if r["source"] == "reddit" and r["title"]:
             summary = r["title"]
