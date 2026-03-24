@@ -3,104 +3,74 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>TSA Watch: LGA (focus: Terminal C)</title>
+<title>Terminal Watch — Crowdsourced TSA Wait Times</title>
 <style>
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 720px; margin: 0 auto; padding: 20px; background: #f8f9fa; color: #1a1a1a; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; background: #f8f9fa; color: #1a1a1a; }
   h1 { margin-bottom: 4px; }
-  .subtitle { color: #666; margin-bottom: 16px; }
-  .summary-box { background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 16px; margin-bottom: 24px; }
-  .summary-box .big { font-size: 1.4em; font-weight: 600; }
-  .day-header { background: #1a1a1a; color: #fff; padding: 10px 16px; border-radius: 6px; margin-top: 28px; margin-bottom: 12px; }
-  .terminal-section { background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 16px; margin-bottom: 16px; }
-  .terminal-section.focus { border-left: 4px solid #0066cc; }
-  .terminal-header { font-size: 1.1em; font-weight: 600; margin-bottom: 8px; }
-  .terminal-header .star { color: #f5a623; }
-  .wait-summary { color: #555; margin-bottom: 12px; font-size: 0.95em; }
-  .wait-summary li { margin-bottom: 2px; }
-  .post { padding: 8px 0; border-bottom: 1px solid #eee; }
-  .post:last-child { border-bottom: none; }
-  .post-time { font-weight: 600; color: #333; }
-  .post-source { display: inline-block; background: #e9ecef; border-radius: 3px; padding: 1px 6px; font-size: 0.8em; color: #555; margin-left: 4px; }
-  .post-source.reddit { background: #ff4500; color: #fff; }
-  .post-source.bluesky { background: #0085ff; color: #fff; }
-  .post-score { color: #888; font-size: 0.85em; }
-  .post-text { margin: 4px 0; }
-  .post-wait { background: #fff3cd; border-radius: 4px; padding: 2px 8px; font-size: 0.9em; font-weight: 500; display: inline-block; margin-top: 2px; }
-  .post-link { font-size: 0.85em; }
-  a { color: #0066cc; text-decoration: none; }
-  a:hover { text-decoration: underline; }
+  .subtitle { color: #666; margin-bottom: 24px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+  .card { display: block; background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 16px; text-decoration: none; color: inherit; transition: border-color 0.15s; }
+  .card:hover { border-color: #0066cc; }
+  .card-code { font-size: 1.6em; font-weight: 700; color: #1a1a1a; }
+  .card-name { font-size: 0.9em; color: #555; margin: 4px 0 8px; }
+  .card-badge { font-size: 0.8em; color: #888; background: #f0f0f0; display: inline-block; padding: 2px 8px; border-radius: 3px; }
+  .footer { margin-top: 32px; font-size: 0.85em; color: #999; }
 </style>
 </head>
 <body>
-<h1>TSA Watch: LGA (focus: Terminal C)</h1>
-<p class="subtitle"><b>Last updated: Mar 24, 2026 08:51 AM ET</b> &mdash; 6 reports across 3 days</p>
-<div class="summary-box"><p><b>Expect significant delays at LGA Terminal C right now.</b> Standard TSA lines are running <b>2–3 hours</b> (Sun Mar 22, 6:37 AM) with reports of waits stretching to <b>3 hours</b> (Mon Mar 23, 6:41 PM). Even TSA PreCheck is heavily congested, with <b>hundred-person lines that are moving but extremely backed up</b> (Tue Mar 24, 11:23 AM). One traveler reported <b>20 minutes for PreCheck at the American Airlines terminal</b> (Sun Mar 22, 5:51 PM), suggesting some variation by gate area, but this appears to be the exception rather than the rule.</p>
-
-<p>Early morning appears to be the worst time. A traveler departing at 6:00 AM encountered what they described as <b>a 2–3 hour line</b> (Sun Mar 22, 8:37 AM). Evening waits also remain severe, with <b>2-hour standard lines reported</b> (Sun Mar 22, 10:20 PM). The busiest reported time was <b>mid-to-late morning on Tuesday (Tue Mar 24, 11:23 AM)</b>, when PreCheck lines were described as "hundreds long."</p>
-
-<p><b>Arrive at the airport at least 3–4 hours before departure if you don't have PreCheck, and 2.5–3 hours if you do.</b> Even with PreCheck, expect substantial delays. If your ticket doesn't show PreCheck status, verify it in advance to avoid surprises at security.</p></div>
-<div class="day-header">Tuesday Mar 24, 2026</div>
-<div class="terminal-section focus">
-<div class="terminal-header">Terminal C <span class="star">★</span></div>
-<ul class="wait-summary">
-<li>No explicit wait times; see posts below</li>
-</ul>
-<div class="post">
-<span class="post-time">11:23 AM</span>
-<span class="post-source bluesky">BLUESKY</span>
-<div class="post-text">ICE at LaGuardia Terminal C...just hanging around and walking about. Doesn&#x27;t seem to be affecting line wait at all. TSA Pre check line is hundreds long...moving, but crazy.</div>
-<div class="post-link"><a href="https://bsky.app/profile/johnbharris.bsky.social/post/3mhshktiyys22" target="_blank">https://bsky.app/profile/johnbharris.bsky.social/post/3mhshktiyys22</a></div>
+<h1>Terminal Watch</h1>
+<p class="subtitle"><b>Last updated: Mar 24, 2026 09:15 AM ET</b> &mdash; Crowdsourced TSA wait times from Reddit and Bluesky</p>
+<div class="grid">
+<a href="atl/index.html" class="card">
+<div class="card-code">ATL</div>
+<div class="card-name">Atlanta (Hartsfield-Jackson)</div>
+<div class="card-badge">14 reports</div>
+</a><a href="dfw/index.html" class="card">
+<div class="card-code">DFW</div>
+<div class="card-name">Dallas/Fort Worth</div>
+<div class="card-badge">4 reports</div>
+</a><a href="den/index.html" class="card">
+<div class="card-code">DEN</div>
+<div class="card-name">Denver International</div>
+<div class="card-badge">3 reports</div>
+</a><a href="ord/index.html" class="card">
+<div class="card-code">ORD</div>
+<div class="card-name">Chicago O&#x27;Hare</div>
+<div class="card-badge">2 reports</div>
+</a><a href="lax/index.html" class="card">
+<div class="card-code">LAX</div>
+<div class="card-name">Los Angeles (LAX)</div>
+<div class="card-badge">4 reports</div>
+</a><a href="jfk/index.html" class="card">
+<div class="card-code">JFK</div>
+<div class="card-name">New York JFK</div>
+<div class="card-badge">4 reports</div>
+</a><a href="clt/index.html" class="card">
+<div class="card-code">CLT</div>
+<div class="card-name">Charlotte Douglas</div>
+<div class="card-badge">2 reports</div>
+</a><a href="las/index.html" class="card">
+<div class="card-code">LAS</div>
+<div class="card-name">Las Vegas (Harry Reid)</div>
+<div class="card-badge">7 reports</div>
+</a><a href="mco/index.html" class="card">
+<div class="card-code">MCO</div>
+<div class="card-name">Orlando International</div>
+<div class="card-badge">4 reports</div>
+</a><a href="mia/index.html" class="card">
+<div class="card-code">MIA</div>
+<div class="card-name">Miami International</div>
+<div class="card-badge">2 reports</div>
+</a><a href="lga/index.html" class="card">
+<div class="card-code">LGA</div>
+<div class="card-name">New York LaGuardia</div>
+<div class="card-badge">8 reports</div>
+</a><a href="ewr/index.html" class="card">
+<div class="card-code">EWR</div>
+<div class="card-name">Newark Liberty</div>
+<div class="card-badge">5 reports</div>
+</a>
 </div>
-</div>
-<div class="terminal-section">
-<div class="terminal-header">General / Terminal not specified</div>
-<ul class="wait-summary">
-<li>General line: 240&ndash;240 min (1 data points)</li>
-</ul>
-<div class="post">
-<span class="post-time">11:28 AM</span>
-<span class="post-source bluesky">BLUESKY</span>
-<div class="post-text">TSA agents, many who’ve not been paid since Jan, work while watching ICE stand around doing nothing, but are being paid, regardless. Add that to the list of awfulness, inc up to 4hr lines &amp; a fatal co... <span class="post-wait">⏱️ 240m</span></div>
-<div class="post-link"><a href="https://bsky.app/profile/sharonjohnston.bsky.social/post/3mhshtnnea224" target="_blank">https://bsky.app/profile/sharonjohnston.bsky.social/post/3mhshtnnea224</a></div>
-</div>
-</div>
-<div class="day-header">Monday Mar 23, 2026</div>
-<div class="terminal-section">
-<div class="terminal-header">General / Terminal not specified</div>
-<ul class="wait-summary">
-<li>General line: 180&ndash;180 min (2 data points)</li>
-</ul>
-<div class="post">
-<span class="post-time">06:41 PM</span>
-<span class="post-source bluesky">BLUESKY</span> <span class="post-score">(6↑)</span>
-<div class="post-text">I spent 3 hours in line for TSA at La Guardia yesterday, and the entire time I was thinking of those TSA agents being the real victims in all of this. Of course they&#x27;re leaving for work where they get... <span class="post-wait">⏱️ 180m, 180m</span></div>
-<div class="post-link"><a href="https://bsky.app/profile/sueryanmn.bsky.social/post/3mhqpl75xpk2l" target="_blank">https://bsky.app/profile/sueryanmn.bsky.social/post/3mhqpl75xpk2l</a></div>
-</div>
-</div>
-<div class="day-header">Sunday Mar 22, 2026</div>
-<div class="terminal-section">
-<div class="terminal-header">General / Terminal not specified</div>
-<ul class="wait-summary">
-<li>General line: 20&ndash;20 min (2 data points)</li>
-<li>PreCheck: 180&ndash;180 min (1 data points)</li>
-</ul>
-<div class="post">
-<span class="post-time">10:20 PM</span>
-<span class="post-source bluesky">BLUESKY</span> <span class="post-score">(89↑)</span>
-<div class="post-text">I just spent two hours getting through security at La Guardia. The line wrapped around the entire terminal before it even got to the traditional start of the security line. The TSA precheck line wasn&#x27;...</div>
-<div class="post-link"><a href="https://bsky.app/profile/stephen-morrison.bsky.social/post/3mholdoidls27" target="_blank">https://bsky.app/profile/stephen-morrison.bsky.social/post/3mholdoidls27</a></div>
-</div>
-<div class="post">
-<span class="post-time">05:51 PM</span>
-<span class="post-source bluesky">BLUESKY</span> <span class="post-score">(1↑)</span>
-<div class="post-text">I was at La Guardia today…20 minutes from Uber through Security at TSA Pre. American Airlines terminal… <span class="post-wait">⏱️ 20m, 20m</span></div>
-<div class="post-link"><a href="https://bsky.app/profile/scouzens.bsky.social/post/3mho4c5ikys22" target="_blank">https://bsky.app/profile/scouzens.bsky.social/post/3mho4c5ikys22</a></div>
-</div>
-<div class="post">
-<span class="post-time">08:37 AM</span>
-<span class="post-source bluesky">BLUESKY</span> <span class="post-score">(78↑)</span>
-<div class="post-text">flying out of La Guardia at 6am and this is the craziest line I’ve ever seen for TSA in my life - I expected it to be bad but this is hard to fathom, this is like a 2-3 hour line  and of course for so... <span class="post-wait">⏱️ 180m</span></div>
-<div class="post-link"><a href="https://bsky.app/profile/jules.su/post/3mhn5evrymk2h" target="_blank">https://bsky.app/profile/jules.su/post/3mhn5evrymk2h</a></div>
-</div>
-</div>
-</body></html>
+<div class="footer">Updated hourly. Data sourced from public social media posts.</div>
+</body>
+</html>
