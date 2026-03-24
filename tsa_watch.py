@@ -35,8 +35,29 @@ AIRPORT_NAMES = {
     "TYS": ["TYS", "Knoxville", "McGhee Tyson"],
 }
 
-# Subreddits to search
-SUBREDDITS = ["TSA", "delta", "flying", "americanairlines", "unitedairlines", "travel", "airports"]
+# Subreddits to search — general airline/travel subs plus airport-specific ones
+SUBREDDITS = [
+    "TSA", "delta", "flying", "americanairlines", "unitedairlines",
+    "travel", "airports", "jetblue", "spiritair", "SouthwestAirlines",
+    # Airport-specific subs (active for TSA content)
+    "JFKAirport", "LAX", "OHareAirport",
+]
+
+# Additional city/local subs keyed by airport code — searched only for that airport
+AIRPORT_SUBREDDITS = {
+    "LGA": ["nyc", "newyorkcity", "astoria", "Queens"],
+    "JFK": ["nyc", "newyorkcity", "JFKAirport"],
+    "EWR": ["newjersey", "Newark"],
+    "ORD": ["chicago", "OHareAirport"],
+    "LAX": ["LosAngeles", "LAX"],
+    "SFO": ["sanfrancisco", "bayarea"],
+    "ATL": ["Atlanta"],
+    "DFW": ["Dallas", "FortWorth"],
+    "DEN": ["Denver"],
+    "SEA": ["Seattle"],
+    "BOS": ["boston"],
+    "MIA": ["Miami"],
+}
 
 # Patterns used for extracting explicit wait times from text (for display only)
 WAIT_TIME_PATTERNS = [
@@ -239,7 +260,17 @@ def search_reddit(airport_code, terminal=None, hours=24):
     names = AIRPORT_NAMES.get(airport_code, [airport_code])
     cutoff = datetime.now(timezone.utc) - timedelta(hours=hours)
 
-    for subreddit in SUBREDDITS:
+    # Combine general subs with airport-specific local subs
+    all_subs = list(SUBREDDITS) + AIRPORT_SUBREDDITS.get(airport_code, [])
+    # Deduplicate while preserving order
+    seen_subs = set()
+    unique_subs = []
+    for s in all_subs:
+        if s.lower() not in seen_subs:
+            seen_subs.add(s.lower())
+            unique_subs.append(s)
+
+    for subreddit in unique_subs:
         for name in names[:2]:  # limit to avoid rate limiting
             query = urllib.parse.quote(f"{name} TSA security")
             url = (
