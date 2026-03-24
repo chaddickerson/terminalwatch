@@ -251,7 +251,8 @@ def llm_generate_summary(posts, airport_code, terminal=None):
         items.append(f"[{source}: {ts.strftime('%a %b %d, %I:%M %p ET')}]({url}){terminal_info} {text}")
 
     terminal_note = f" Terminal {terminal.upper()}" if terminal else ""
-    prompt = f"""You are writing a brief summary of TSA wait time reports at {airport_code}{terminal_note} for a traveler.
+    today_str = datetime.now(eastern).strftime("%a %b %d, %Y")
+    prompt = f"""You are writing a brief summary of TSA wait time reports at {airport_code}{terminal_note} for a traveler. Today's date is {today_str}.
 
 Write in HTML (use <p> tags only, no headings). Structure the summary as follows:
 
@@ -263,9 +264,17 @@ Write in HTML (use <p> tags only, no headings). Structure the summary as follows
 
 Within all sections, always present newer information before older information.
 
-IMPORTANT: Every time you reference a report or data point, include the source name and time in parentheses, with the source name linked to the original post URL. The input data is formatted as [Source: Day Mon DD, HH:MM AM/PM ET](url). Use this to build linked citations. Never use relative terms like "this morning," "recent," "earlier today," or "yesterday" without also stating the exact date and time. Examples:
-- "Terminal B waits hit 2 hours (<a href="https://reddit.com/..." target="_blank">Reddit</a>: Tue Mar 24, 6:08 AM)"
-- "PreCheck was 20 minutes (<a href="https://bsky.app/..." target="_blank">Bluesky</a>: Sun Mar 22, 1:51 PM)"
+IMPORTANT CITATION FORMAT: Every time you reference a report or data point, place the citation in parentheses AFTER the claim, with the entire "Source - Day Mon DD, H:MM PM" text linked to the original post URL. The input data is formatted as [Source: Day Mon DD, HH:MM AM/PM ET](url). Use this to build linked citations.
+
+Correct citation style — source and time in parentheses after the fact, linked together:
+- "PreCheck was approximately <b>30 minutes</b> during lunchtime (<a href="https://bsky.app/..." target="_blank">Bluesky - Tue Mar 24, 1:24 PM</a>)"
+- "a traveler waited <b>1 hour 37 minutes</b> in the regular security line (<a href="https://twitter.com/..." target="_blank">Twitter - Tue Mar 24, 11:44 AM</a>)"
+
+WRONG — do NOT lead sentences with "On Source, Date":
+- WRONG: "On Bluesky, Tue Mar 24, 1:24 PM, PreCheck was 30 minutes"
+- WRONG: "On Twitter, Tue Mar 24, a traveler reported..."
+
+Also: if a report's date matches today's date, say "today" naturally in the prose (e.g., "PreCheck was 30 minutes today") but still include the full date in the parenthetical citation. Never say "that same day" or "earlier that same day" — say "today" or "earlier today" when the date is today.
 
 Be concise. Use bold (<b>) for key numbers. Do not editorialize about politics or TSA funding — just report what travelers are seeing on the ground."""
 
@@ -793,6 +802,7 @@ def format_html(results, airport_code, terminal=None, summary_html=None, archive
   .post-source.reddit {{ background: #ff4500; color: #fff; }}
   .post-source.bluesky {{ background: #0085ff; color: #fff; }}
   .post-source.twitter {{ background: #000; color: #fff; }}
+  .post-handle {{ font-size: 0.8em; color: #666; margin-left: 4px; }}
   .post-score {{ color: #888; font-size: 0.85em; }}
   .post-text {{ margin: 4px 0; }}
   .post-wait {{ background: #fff3cd; border-radius: 4px; padding: 2px 8px; font-size: 0.9em; font-weight: 500; display: inline-block; margin-top: 2px; }}
@@ -929,7 +939,7 @@ def _html_posts(posts):
             summary = r["title"]
         else:
             body = r["body"].replace("\n", " ").strip()
-            summary = body[:200] + "..." if len(body) > 200 else body
+            summary = body
 
         wait_times = extract_wait_times(f"{r['title']} {r['body']}")
         wait_html = ""
@@ -940,9 +950,14 @@ def _html_posts(posts):
         if r["score"] > 0:
             score_html = f' <span class="post-score">({r["score"]}↑)</span>'
 
+        # Show @handle next to badge for Bluesky and Twitter
+        handle_html = ""
+        if r["source"] in ("bluesky", "twitter") and r.get("subreddit", "").startswith("@"):
+            handle_html = f' <span class="post-handle">{escape(r["subreddit"])}</span>'
+
         html += f"""<div class="post">
 <span class="post-time">{escape(time_str)}</span>
-<a href="{escape(r['url'])}" target="_blank" class="post-source {source_cls}">{escape(source.upper())}</a>{score_html}
+<a href="{escape(r['url'])}" target="_blank" class="post-source {source_cls}">{escape(source.upper())}</a>{handle_html}{score_html}
 <div class="post-text">{escape(summary)}{wait_html}</div>
 </div>
 """
