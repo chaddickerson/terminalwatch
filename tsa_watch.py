@@ -35,17 +35,15 @@ AIRPORT_NAMES = {
     "TYS": ["TYS", "Knoxville", "McGhee Tyson"],
 }
 
-# Subreddits to search — general airline/travel subs plus airport-specific ones
+# Subreddits searched for every airport
 SUBREDDITS = [
     "TSA", "delta", "flying", "americanairlines", "unitedairlines",
     "travel", "airports", "jetblue", "spiritair", "SouthwestAirlines",
-    # Airport-specific subs (active for TSA content)
-    "JFKAirport", "LAX", "OHareAirport",
 ]
 
-# Additional city/local subs keyed by airport code — searched only for that airport
+# Additional subs searched only for the specific airport
 AIRPORT_SUBREDDITS = {
-    "LGA": ["nyc", "newyorkcity", "astoria", "Queens"],
+    "LGA": ["nyc", "newyorkcity"],
     "JFK": ["nyc", "newyorkcity", "JFKAirport"],
     "EWR": ["newjersey", "Newark"],
     "ORD": ["chicago", "OHareAirport"],
