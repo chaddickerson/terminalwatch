@@ -466,6 +466,86 @@ def search_bluesky(airport_code, terminal=None, hours=24):
     return results
 
 
+def search_twitter(airport_code, terminal=None, hours=24):
+    """Search X/Twitter for recent TSA/airport posts via the v2 API."""
+    bearer = os.environ.get("TWITTER_BEARER_TOKEN")
+    if not bearer:
+        print("  [skip] TWITTER_BEARER_TOKEN not set", file=sys.stderr)
+        return []
+
+    results = []
+    names = AIRPORT_NAMES.get(airport_code, [airport_code])
+    cutoff = datetime.now(timezone.utc) - timedelta(hours=hours)
+
+    for name in names[:2]:
+        query = urllib.parse.quote(f"{name} TSA -is:retweet lang:en")
+        url = (
+            f"https://api.x.com/2/tweets/search/recent"
+            f"?query={query}&max_results=25"
+            f"&tweet.fields=created_at,public_metrics,text"
+            f"&expansions=author_id&user.fields=username"
+        )
+        req = urllib.request.Request(url, headers={
+            "Authorization": f"Bearer {bearer}",
+        })
+        try:
+            with urllib.request.urlopen(req, timeout=15) as resp:
+                data = json.loads(resp.read().decode())
+        except (urllib.error.URLError, urllib.error.HTTPError, json.JSONDecodeError) as e:
+            print(f"  [warn] Twitter search failed: {e}", file=sys.stderr)
+            continue
+
+        # Build user lookup
+        users = {}
+        for u in data.get("includes", {}).get("users", []):
+            users[u["id"]] = u["username"]
+
+        for tweet in data.get("data", []):
+            created_str = tweet.get("created_at", "")
+            try:
+                created = datetime.fromisoformat(created_str.replace("Z", "+00:00"))
+            except (ValueError, TypeError):
+                continue
+
+            if created < cutoff:
+                continue
+
+            text = tweet.get("text", "")
+            text_lower = text.lower()
+
+            if not any(n.lower() in text_lower for n in names):
+                continue
+
+            author = users.get(tweet.get("author_id"), "unknown")
+            metrics = tweet.get("public_metrics", {})
+            tweet_id = tweet.get("id", "")
+            web_url = f"https://x.com/{author}/status/{tweet_id}" if tweet_id else ""
+
+            results.append({
+                "source": "twitter",
+                "subreddit": f"@{author}",
+                "title": "",
+                "body": text[:500],
+                "url": web_url,
+                "timestamp": created.isoformat(),
+                "timestamp_local": created.astimezone(_eastern()).strftime("%a %b %d %I:%M %p"),
+                "score": metrics.get("like_count", 0),
+                "num_comments": metrics.get("reply_count", 0),
+                "relevance": 0,
+                "terminal_match": _terminal_match(text_lower, terminal),
+            })
+
+    # Deduplicate by tweet ID
+    seen = set()
+    deduped = []
+    for r in results:
+        if r["url"] not in seen:
+            seen.add(r["url"])
+            deduped.append(r)
+
+    return deduped
+
+
 def _terminal_match(text, terminal):
     """Check if text mentions a specific terminal."""
     if not terminal:
@@ -707,6 +787,7 @@ def format_html(results, airport_code, terminal=None, summary_html=None, archive
   .post-source {{ display: inline-block; background: #e9ecef; border-radius: 3px; padding: 1px 6px; font-size: 0.8em; color: #555; margin-left: 4px; }}
   .post-source.reddit {{ background: #ff4500; color: #fff; }}
   .post-source.bluesky {{ background: #0085ff; color: #fff; }}
+  .post-source.twitter {{ background: #000; color: #fff; }}
   .post-score {{ color: #888; font-size: 0.85em; }}
   .post-text {{ margin: 4px 0; }}
   .post-wait {{ background: #fff3cd; border-radius: 4px; padding: 2px 8px; font-size: 0.9em; font-weight: 500; display: inline-block; margin-top: 2px; }}
@@ -823,7 +904,7 @@ def _html_posts(posts):
     html = ""
     for r in posts:
         source = r["source"].replace("_", " ")
-        source_cls = "reddit" if "reddit" in r["source"] else "bluesky"
+        source_cls = "reddit" if "reddit" in r["source"] else "twitter" if r["source"] == "twitter" else "bluesky"
         time_str = datetime.fromisoformat(r["timestamp"]).astimezone(_eastern()).strftime("%I:%M %p")
 
         if r["source"] == "reddit" and r["title"]:
@@ -933,12 +1014,16 @@ def run_single_airport(airport, terminal, hours, output_dir=None, archive_base=N
     bluesky_posts = search_bluesky(airport, terminal, hours)
     stats["bluesky"] = len(bluesky_posts)
 
-    all_results = reddit_posts + reddit_comments + bluesky_posts
+    print("  Searching X/Twitter...", file=sys.stderr)
+    twitter_posts = search_twitter(airport, terminal, hours)
+    stats["twitter"] = len(twitter_posts)
+
+    all_results = reddit_posts + reddit_comments + bluesky_posts + twitter_posts
     stats["total_raw"] = len(all_results)
 
     print(f"  Found {len(all_results)} total "
           f"(reddit: {stats['reddit_posts']}+{stats['reddit_comments']}, "
-          f"bluesky: {stats['bluesky']})", file=sys.stderr)
+          f"bluesky: {stats['bluesky']}, twitter: {stats['twitter']})", file=sys.stderr)
 
     # LLM filter
     print("  Filtering with LLM...", file=sys.stderr)
@@ -1047,6 +1132,7 @@ Examples:
             all_results.extend(search_reddit(airport, args.terminal, args.hours))
             all_results.extend(search_reddit_comments(airport, args.terminal, args.hours))
             all_results.extend(search_bluesky(airport, args.terminal, args.hours))
+            all_results.extend(search_twitter(airport, args.terminal, args.hours))
             print(json.dumps(all_results, indent=2))
         elif args.html:
             # Single airport HTML
