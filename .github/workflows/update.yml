@@ -22,11 +22,17 @@ jobs:
 
       - name: Archive current reports
         run: |
-          TIMESTAMP=$(date -u +%Y%m%d-%H%M%S)
           for code in atl dfw den ord lax jfk clt las mco mia lga ewr; do
             if [ -f "${code}/index.html" ]; then
+              # Use the git commit time of the file to get the actual report generation time
+              ARCHIVE_TS=$(git log -1 --format="%at" -- "${code}/index.html" 2>/dev/null || true)
+              if [ -n "$ARCHIVE_TS" ]; then
+                ARCHIVE_NAME=$(date -u -d "@${ARCHIVE_TS}" +%Y%m%d-%H%M%S)
+              else
+                ARCHIVE_NAME=$(date -u +%Y%m%d-%H%M%S)
+              fi
               mkdir -p "${code}/archive"
-              cp "${code}/index.html" "${code}/archive/${TIMESTAMP}.html"
+              cp "${code}/index.html" "${code}/archive/${ARCHIVE_NAME}.html"
             fi
           done
 

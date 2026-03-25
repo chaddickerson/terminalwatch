@@ -780,6 +780,15 @@ def format_html(results, airport_code, terminal=None, summary_html=None, archive
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:title" content="TSA Wait Times: {airport_code} — Terminal Watch">
+<meta property="og:description" content="Crowdsourced TSA wait times at {airport_code}. Updated hourly from Reddit, Bluesky, and Twitter.">
+<meta property="og:image" content="https://terminalwatch.info/og-image.png">
+<meta property="og:url" content="https://terminalwatch.info/{airport_code.lower()}/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="TSA Wait Times: {airport_code} — Terminal Watch">
+<meta name="twitter:description" content="Crowdsourced TSA wait times at {airport_code}. Updated hourly from Reddit, Bluesky, and Twitter.">
+<meta name="twitter:image" content="https://terminalwatch.info/og-image.png">
 <title>TSA Watch: {airport_code}{focus_label}</title>
 <style>
   body {{ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 720px; margin: 0 auto; padding: 20px; background: #f8f9fa; color: #1a1a1a; }}
@@ -999,6 +1008,15 @@ def generate_landing_page(output_dir, airport_stats):
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:title" content="Terminal Watch — Crowdsourced TSA Wait Times">
+<meta property="og:description" content="Real-time TSA wait times crowdsourced from Reddit, Bluesky, and Twitter. Updated hourly.">
+<meta property="og:image" content="https://terminalwatch.info/og-image.png">
+<meta property="og:url" content="https://terminalwatch.info">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Terminal Watch — Crowdsourced TSA Wait Times">
+<meta name="twitter:description" content="Real-time TSA wait times crowdsourced from Reddit, Bluesky, and Twitter. Updated hourly.">
+<meta name="twitter:image" content="https://terminalwatch.info/og-image.png">
 <title>Terminal Watch — Crowdsourced TSA Wait Times</title>
 <style>
   body {{ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; background: #f8f9fa; color: #1a1a1a; }}
