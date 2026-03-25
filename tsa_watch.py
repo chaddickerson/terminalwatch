@@ -781,13 +781,13 @@ def format_html(results, airport_code, terminal=None, summary_html=None, archive
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <meta property="og:title" content="TSA Wait Times: {airport_code} — Terminal Watch">
-<meta property="og:description" content="Crowdsourced TSA wait times at {airport_code}. Updated hourly from Reddit, Bluesky, and Twitter.">
+<meta property="og:description" content="Crowdsourced TSA wait times at {airport_code}. Updated hourly from Bluesky and Twitter.">
 <meta property="og:image" content="https://terminalwatch.info/og-image.png">
 <meta property="og:url" content="https://terminalwatch.info/{airport_code.lower()}/">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="TSA Wait Times: {airport_code} — Terminal Watch">
-<meta name="twitter:description" content="Crowdsourced TSA wait times at {airport_code}. Updated hourly from Reddit, Bluesky, and Twitter.">
+<meta name="twitter:description" content="Crowdsourced TSA wait times at {airport_code}. Updated hourly from Bluesky and Twitter.">
 <meta name="twitter:image" content="https://terminalwatch.info/og-image.png">
 <title>TSA Watch: {airport_code}{focus_label}</title>
 <style>
@@ -1009,13 +1009,13 @@ def generate_landing_page(output_dir, airport_stats):
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <meta property="og:title" content="Terminal Watch — Crowdsourced TSA Wait Times">
-<meta property="og:description" content="Real-time TSA wait times crowdsourced from Reddit, Bluesky, and Twitter. Updated hourly.">
+<meta property="og:description" content="Real-time TSA wait times crowdsourced from Bluesky and Twitter. Updated hourly.">
 <meta property="og:image" content="https://terminalwatch.info/og-image.png">
 <meta property="og:url" content="https://terminalwatch.info">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Terminal Watch — Crowdsourced TSA Wait Times">
-<meta name="twitter:description" content="Real-time TSA wait times crowdsourced from Reddit, Bluesky, and Twitter. Updated hourly.">
+<meta name="twitter:description" content="Real-time TSA wait times crowdsourced from Bluesky and Twitter. Updated hourly.">
 <meta name="twitter:image" content="https://terminalwatch.info/og-image.png">
 <title>Terminal Watch — Crowdsourced TSA Wait Times</title>
 <style>
@@ -1035,7 +1035,7 @@ def generate_landing_page(output_dir, airport_stats):
 <h1>Terminal Watch</h1>
 <p style="font-size: 0.85em; color: #555; margin: 4px 0 8px;"><em>This is very much a beta web site.</em></p>
 <p style="font-size: 0.85em; color: #555; margin: 4px 0 12px;">Want to support this project? <a href="https://donate.stripe.com/3cI6oIdl9bhKcLG7MI6AM00" target="_blank" style="color: #0066cc;">Make a donation of any size.</a></p>
-<p class="subtitle"><b>Last updated: {now_str}</b> &mdash; Crowdsourced TSA wait times from Reddit, Bluesky, and Twitter</p>
+<p class="subtitle"><b>Last updated: {now_str}</b> &mdash; Crowdsourced TSA wait times from Bluesky and Twitter</p>
 <div class="grid">
 {"".join(cards)}
 </div>
