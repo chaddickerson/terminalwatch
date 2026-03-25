@@ -779,6 +779,13 @@ def format_html(results, airport_code, terminal=None, summary_html=None, archive
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6BJC8T5KKQ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){{dataLayer.push(arguments);}}
+  gtag('js', new Date());
+  gtag('config', 'G-6BJC8T5KKQ');
+</script>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <meta property="og:title" content="TSA Wait Times: {airport_code} — Terminal Watch">
 <meta property="og:description" content="Crowdsourced TSA wait times at {airport_code}. Updated hourly from Bluesky and Twitter.">
@@ -1007,6 +1014,13 @@ def generate_landing_page(output_dir, airport_stats):
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6BJC8T5KKQ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){{dataLayer.push(arguments);}}
+  gtag('js', new Date());
+  gtag('config', 'G-6BJC8T5KKQ');
+</script>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <meta property="og:title" content="Terminal Watch — Crowdsourced TSA Wait Times">
 <meta property="og:description" content="Real-time TSA wait times crowdsourced from Bluesky and Twitter. Updated hourly.">
