@@ -852,7 +852,7 @@ def format_html(results, airport_code, terminal=None, summary_html=None, archive
 <h1>TSA Watch: {escape(airport_code)}{escape(focus_label)}</h1>
 <p class="subtitle"><b>Last updated: {now_str}</b> &mdash; {len(results)} reports across {len(sorted_days)} days</p>
 <div style="background: #e8f4f8; border: 2px solid #4a9ebb; border-radius: 8px; padding: 12px 16px; margin: 12px 0; font-size: 0.95em;">
-<strong>&#9989; How does this work?</strong> We automatically search Bluesky and Twitter for posts about your airport's security lines. You don't need any special hashtags &mdash; just post about your experience going through security and include your airport code (e.g., ORD, JFK, LAX) and mention "TSA" or "security." Posts with specific details are most likely to be picked up, e.g.:
+<strong>&#9989; How does this work?</strong> We automatically search Bluesky and Twitter for posts about your airport's security lines. You don't need any special hashtags &mdash; just post about your experience going through security and include your airport code (e.g., ORD, JFK, LAX), your terminal, and mention "TSA" or "security." Posts with specific details are most likely to be picked up, e.g.:
 <ul style="margin: 6px 0 0 0; padding-left: 20px; font-style: italic; color: #444;">
 <li>"PreCheck at DEN Terminal A took 10 minutes this morning, not bad"</li>
 <li>"Security at JFK Terminal 4 is insane right now, been waiting 45 min"</li>
@@ -1078,7 +1078,7 @@ def generate_landing_page(output_dir, airport_stats):
 <p style="font-size: 0.85em; color: #555; margin: 4px 0 12px;">Want to support this project? <a href="https://donate.stripe.com/3cI6oIdl9bhKcLG7MI6AM00" target="_blank" style="color: #0066cc;">Make a donation of any size.</a></p>
 <p class="subtitle"><b>Last updated: {now_str}</b> &mdash; Crowdsourced TSA wait times from Bluesky and Twitter</p>
 <div style="background: #e8f4f8; border: 2px solid #4a9ebb; border-radius: 8px; padding: 12px 16px; margin: 12px 0; font-size: 0.95em;">
-<strong>&#9989; How does this work?</strong> We automatically search Bluesky and Twitter for posts about your airport's security lines. You don't need any special hashtags &mdash; just post about your experience going through security and include your airport code (e.g., ORD, JFK, LAX) and mention "TSA" or "security." Posts with specific details are most likely to be picked up, e.g.:
+<strong>&#9989; How does this work?</strong> We automatically search Bluesky and Twitter for posts about your airport's security lines. You don't need any special hashtags &mdash; just post about your experience going through security and include your airport code (e.g., ORD, JFK, LAX), your terminal, and mention "TSA" or "security." Posts with specific details are most likely to be picked up, e.g.:
 <ul style="margin: 6px 0 0 0; padding-left: 20px; font-style: italic; color: #444;">
 <li>"PreCheck at DEN Terminal A took 10 minutes this morning, not bad"</li>
 <li>"Security at JFK Terminal 4 is insane right now, been waiting 45 min"</li>
