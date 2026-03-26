@@ -103,7 +103,7 @@ AIRPORT_DISPLAY = {
 }
 
 # Default set of airports for multi-airport mode
-DEFAULT_AIRPORTS = ["ATL", "DFW", "DEN", "ORD", "LAX", "JFK", "CLT", "LAS", "MCO", "MIA", "LGA", "EWR", "IAD", "SFO", "SEA", "PHX", "IAH", "BOS"]
+DEFAULT_AIRPORTS = ["ATL", "BOS", "CLT", "DEN", "DFW", "EWR", "IAD", "IAH", "JFK", "LAS", "LAX", "LGA", "MCO", "MIA", "ORD", "PHX", "SEA", "SFO"]
 
 # Patterns used for extracting explicit wait times from text (for display only)
 WAIT_TIME_PATTERNS = [
