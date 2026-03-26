@@ -194,14 +194,14 @@ def llm_filter_posts(posts, airport_code, terminal=None):
         items.append({"id": i, "text": text})
 
     terminal_note = f" Terminal {terminal.upper()}" if terminal else ""
-    prompt = f"""You are filtering social media posts about TSA wait times at {airport_code}{terminal_note}.
+    prompt = f"""You are filtering social media posts about TSA / airport security wait times at {airport_code}{terminal_note}.
 
 For each post, decide: INCLUDE or EXCLUDE.
 
-INCLUDE posts where someone reports firsthand wait time observations:
+INCLUDE posts where someone reports firsthand security checkpoint wait time observations:
 - Explicit wait times ("took 2 hours", "45 min precheck", "got through in 20 minutes")
 - Specific line length descriptions ("line wrapped around the terminal twice", "line goes back to the rideshare area")
-- Personal reports of how long they waited or how long it took to get through
+- Personal reports of how long they waited or how long it took to get through security
 
 EXCLUDE:
 - News articles about TSA funding, politics, or policy
@@ -210,6 +210,7 @@ EXCLUDE:
 - General complaints without specific wait information ("lines are insane" with no detail)
 - Posts about plane crashes, incidents, or safety issues
 - Posts asking questions about wait times without reporting any
+- Posts about non-security topics that happen to mention "security" (e.g., airport security incidents, lost items)
 
 Respond with ONLY a JSON array of the numeric IDs to INCLUDE. Example: [0, 3, 7]
 If none should be included, respond with: []"""
@@ -333,7 +334,8 @@ def search_reddit(airport_code, terminal=None, hours=24):
 
     for subreddit in unique_subs:
         for name in names[:2]:  # limit to avoid rate limiting
-            query = urllib.parse.quote(f"{name} TSA security")
+          for q_template in ["{name} TSA security", "{name} security line", "{name} security wait"]:
+            query = urllib.parse.quote(q_template.format(name=name))
             url = (
                 f"https://www.reddit.com/r/{subreddit}/search.json"
                 f"?q={query}&sort=new&restrict_sr=on&t=week&limit=25"
@@ -388,7 +390,8 @@ def search_reddit_comments(airport_code, terminal=None, hours=24):
     cutoff = datetime.now(timezone.utc) - timedelta(hours=hours)
 
     for name in names[:2]:
-        query = urllib.parse.quote(f"{name} TSA wait")
+      for q_template in ["{name} TSA wait", "{name} security wait", "{name} security line"]:
+        query = urllib.parse.quote(q_template.format(name=name))
         url = (
             f"https://www.reddit.com/search.json"
             f"?q={query}&sort=new&type=comment&t=week&limit=25"
@@ -434,7 +437,8 @@ def search_bluesky(airport_code, terminal=None, hours=24):
     cutoff = datetime.now(timezone.utc) - timedelta(hours=hours)
 
     for name in names[:2]:
-        query = urllib.parse.quote(f"{name} TSA")
+      for q_template in ["{name} TSA", "{name} security line", "{name} security wait"]:
+        query = urllib.parse.quote(q_template.format(name=name))
         url = f"https://api.bsky.app/xrpc/app.bsky.feed.searchPosts?q={query}&sort=latest&limit=25"
         data = _request(url, headers={"Accept": "application/json"})
         if not data:
@@ -501,7 +505,7 @@ def search_twitter(airport_code, terminal=None, hours=24):
     cutoff = datetime.now(timezone.utc) - timedelta(hours=hours)
 
     for name in names[:2]:
-        query = urllib.parse.quote(f"{name} TSA -is:retweet lang:en")
+        query = urllib.parse.quote(f"{name} (TSA OR security) -is:retweet lang:en")
         url = (
             f"https://api.x.com/2/tweets/search/recent"
             f"?query={query}&max_results=25"
@@ -812,8 +816,8 @@ def format_html(results, airport_code, terminal=None, summary_html=None, archive
   body {{ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 720px; margin: 0 auto; padding: 20px; background: #f8f9fa; color: #1a1a1a; }}
   h1 {{ margin-bottom: 4px; }}
   .subtitle {{ color: #666; margin-bottom: 16px; }}
-  .summary-box {{ background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 16px; margin-bottom: 24px; }}
-  .summary-box .big {{ font-size: 1.4em; font-weight: 600; }}
+  .summary-box {{ background: #fff; border: 2px solid #1a1a1a; border-radius: 8px; padding: 20px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.12); }}
+  .summary-box .big {{ font-size: 1.6em; font-weight: 700; }}
   .day-header {{ background: #1a1a1a; color: #fff; padding: 10px 16px; border-radius: 6px; margin-top: 28px; margin-bottom: 12px; }}
   .terminal-section {{ background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 16px; margin-bottom: 16px; }}
   .terminal-section.focus {{ border-left: 4px solid #0066cc; }}
@@ -847,6 +851,13 @@ def format_html(results, airport_code, terminal=None, summary_html=None, archive
 <p style="margin-bottom:4px"><a href="../">&larr; All airports</a></p>
 <h1>TSA Watch: {escape(airport_code)}{escape(focus_label)}</h1>
 <p class="subtitle"><b>Last updated: {now_str}</b> &mdash; {len(results)} reports across {len(sorted_days)} days</p>
+<div style="background: #e8f4f8; border: 2px solid #4a9ebb; border-radius: 8px; padding: 12px 16px; margin: 12px 0; font-size: 0.95em;">
+<strong>&#9989; How does this work?</strong> We automatically search Bluesky and Twitter for posts about your airport's security lines. You don't need any special hashtags &mdash; just post about your experience going through security and include your airport code (e.g., ORD, JFK, LAX) and mention "TSA" or "security." Posts with specific details are most likely to be picked up, e.g.:
+<ul style="margin: 6px 0 0 0; padding-left: 20px; font-style: italic; color: #444;">
+<li>"PreCheck at DEN Terminal A took 10 minutes this morning, not bad"</li>
+<li>"Security at JFK Terminal 4 is insane right now, been waiting 45 min"</li>
+</ul>
+</div>
 <div style="background: #fff3cd; border: 2px solid #ffc107; border-radius: 8px; padding: 12px 16px; margin: 12px 0; font-size: 0.95em;">
 <strong>&#128227; Want to help?</strong> I am trying to integrate Reddit content but my initial application for an API key was quickly denied, presumably via an automated system. If you can help me get a Reddit API key (or have other ideas for sources available via API), email me at hello at chaddickerson.com!
 </div>
@@ -882,6 +893,8 @@ def format_html(results, airport_code, terminal=None, summary_html=None, archive
             for date_label, time_links in by_date.items():
                 lines.append(f'<span class="archive-label">{date_label}:</span> {sep.join(time_links)}')
             html += f'<div class="archive">{"<br>".join(lines)}</div>\n'
+
+    html += f'<h2 style="margin-top: 24px; margin-bottom: 12px; font-size: 1.5em;">Airport Update: {escape(airport_code)}</h2>\n'
 
     if summary_html:
         html += f'<div class="summary-box">{summary_html}</div>\n'
@@ -1064,6 +1077,13 @@ def generate_landing_page(output_dir, airport_stats):
 <p style="font-size: 0.85em; color: #555; margin: 4px 0 8px;"><em>This is very much a beta web site.</em></p>
 <p style="font-size: 0.85em; color: #555; margin: 4px 0 12px;">Want to support this project? <a href="https://donate.stripe.com/3cI6oIdl9bhKcLG7MI6AM00" target="_blank" style="color: #0066cc;">Make a donation of any size.</a></p>
 <p class="subtitle"><b>Last updated: {now_str}</b> &mdash; Crowdsourced TSA wait times from Bluesky and Twitter</p>
+<div style="background: #e8f4f8; border: 2px solid #4a9ebb; border-radius: 8px; padding: 12px 16px; margin: 12px 0; font-size: 0.95em;">
+<strong>&#9989; How does this work?</strong> We automatically search Bluesky and Twitter for posts about your airport's security lines. You don't need any special hashtags &mdash; just post about your experience going through security and include your airport code (e.g., ORD, JFK, LAX) and mention "TSA" or "security." Posts with specific details are most likely to be picked up, e.g.:
+<ul style="margin: 6px 0 0 0; padding-left: 20px; font-style: italic; color: #444;">
+<li>"PreCheck at DEN Terminal A took 10 minutes this morning, not bad"</li>
+<li>"Security at JFK Terminal 4 is insane right now, been waiting 45 min"</li>
+</ul>
+</div>
 <div style="background: #fff3cd; border: 2px solid #ffc107; border-radius: 8px; padding: 12px 16px; margin: 12px 0; font-size: 0.95em;">
 <strong>&#128227; Want to help?</strong> I am trying to integrate Reddit content but my initial application for an API key was quickly denied, presumably via an automated system. If you can help me get a Reddit API key (or have other ideas for sources available via API), email me at hello at chaddickerson.com!
 </div>
