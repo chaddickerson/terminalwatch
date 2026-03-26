@@ -264,15 +264,19 @@ def llm_generate_summary(posts, airport_code, terminal=None):
 
     terminal_note = f" Terminal {terminal.upper()}" if terminal else ""
     today_str = datetime.now(eastern).strftime("%a %b %d, %Y")
-    prompt = f"""You are writing a brief summary of TSA wait time reports at {airport_code}{terminal_note} for a traveler. Today's date is {today_str}.
+    prompt = f"""You are writing a brief summary of TSA wait time reports at {airport_code}{terminal_note} for a traveler. Today's date is {today_str}. The current time is {datetime.now(eastern).strftime('%I:%M %p ET')}.
 
-Write in HTML (use <p> tags only, no headings). Structure the summary as follows:
+IMPORTANT: Only include reports from TODAY. If it is before 9 AM ET, you may also include reports from yesterday. Ignore all older reports entirely — travelers want current information.
+
+Write in HTML (use <p> tags only, no headings). Target approximately 200 words (180-220 words). Structure the summary as follows:
 
 1. **Terminal-specific data first.** Group reports by terminal (e.g., Terminal B, Terminal 1). Within each terminal group, present the most recent reports first — newest data is the most valuable. Include specific wait times and note differences between PreCheck, CLEAR, and regular lines when reported.
 
 2. **General (non-terminal-specific) reports next.** After the terminal-specific paragraphs, add a separate paragraph for any reports that don't mention a specific terminal. Again, newest first.
 
 3. **Practical recommendations last.** End with a short recommendation on how early to arrive. Make it terminal-specific if the data supports it (e.g., "Terminal C lines are moving faster than Terminal B"). Note any differences between PreCheck/CLEAR and regular lines in your recommendation.
+
+If there are no reports from today (or yesterday, if before 9 AM), simply write a single paragraph saying no recent reports are available and suggest checking back later.
 
 Within all sections, always present newer information before older information.
 
