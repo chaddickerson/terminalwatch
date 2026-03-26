@@ -847,6 +847,9 @@ def format_html(results, airport_code, terminal=None, summary_html=None, archive
 <p style="margin-bottom:4px"><a href="../">&larr; All airports</a></p>
 <h1>TSA Watch: {escape(airport_code)}{escape(focus_label)}</h1>
 <p class="subtitle"><b>Last updated: {now_str}</b> &mdash; {len(results)} reports across {len(sorted_days)} days</p>
+<div style="background: #fff3cd; border: 2px solid #ffc107; border-radius: 8px; padding: 12px 16px; margin: 12px 0; font-size: 0.95em;">
+<strong>&#128227; Want to help?</strong> I am trying to integrate Reddit content but my initial application for an API key was quickly denied, presumably via an automated system. If you can help me get a Reddit API key (or have other ideas for sources available via API), email me at hello at chaddickerson.com!
+</div>
 """
 
     # Archive links — last 24 hours only, grouped by date
@@ -1061,6 +1064,9 @@ def generate_landing_page(output_dir, airport_stats):
 <p style="font-size: 0.85em; color: #555; margin: 4px 0 8px;"><em>This is very much a beta web site.</em></p>
 <p style="font-size: 0.85em; color: #555; margin: 4px 0 12px;">Want to support this project? <a href="https://donate.stripe.com/3cI6oIdl9bhKcLG7MI6AM00" target="_blank" style="color: #0066cc;">Make a donation of any size.</a></p>
 <p class="subtitle"><b>Last updated: {now_str}</b> &mdash; Crowdsourced TSA wait times from Bluesky and Twitter</p>
+<div style="background: #fff3cd; border: 2px solid #ffc107; border-radius: 8px; padding: 12px 16px; margin: 12px 0; font-size: 0.95em;">
+<strong>&#128227; Want to help?</strong> I am trying to integrate Reddit content but my initial application for an API key was quickly denied, presumably via an automated system. If you can help me get a Reddit API key (or have other ideas for sources available via API), email me at hello at chaddickerson.com!
+</div>
 <div class="grid">
 {"".join(cards)}
 </div>
