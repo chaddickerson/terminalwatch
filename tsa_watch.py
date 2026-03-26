@@ -38,9 +38,11 @@ AIRPORT_NAMES = {
     "MIA": ["MIA", "Miami"],
     "LGA": ["LaGuardia", "La Guardia", "LGA"],
     "EWR": ["Newark", "EWR", "Newark Liberty"],
-    # Additional airports (for local/manual use)
+    "IAD": ["IAD", "Dulles", "Washington Dulles"],
     "SFO": ["SFO", "San Francisco"],
     "SEA": ["SEA", "Seattle", "SeaTac"],
+    "PHX": ["PHX", "Phoenix", "Sky Harbor"],
+    "IAH": ["IAH", "Houston", "George Bush Intercontinental"],
     "BOS": ["BOS", "Boston", "Logan"],
     "TYS": ["TYS", "Knoxville", "McGhee Tyson"],
 }
@@ -70,8 +72,11 @@ AIRPORT_SUBREDDITS = {
     "MIA": ["Miami"],
     "LGA": ["nyc", "newyorkcity", "astoria", "Queens", "LGAairport"],
     "EWR": ["newjersey", "Newark"],
+    "IAD": ["nova", "washingtondc", "Virginia", "DullesAirport"],
     "SFO": ["sanfrancisco", "bayarea"],
     "SEA": ["Seattle"],
+    "PHX": ["phoenix", "arizona"],
+    "IAH": ["houston"],
     "BOS": ["boston"],
 }
 
@@ -89,10 +94,16 @@ AIRPORT_DISPLAY = {
     "MIA": "Miami International",
     "LGA": "New York LaGuardia",
     "EWR": "Newark Liberty",
+    "IAD": "Washington Dulles",
+    "SFO": "San Francisco (SFO)",
+    "SEA": "Seattle-Tacoma",
+    "PHX": "Phoenix Sky Harbor",
+    "IAH": "Houston (George Bush)",
+    "BOS": "Boston Logan",
 }
 
 # Default set of airports for multi-airport mode
-DEFAULT_AIRPORTS = ["ATL", "DFW", "DEN", "ORD", "LAX", "JFK", "CLT", "LAS", "MCO", "MIA", "LGA", "EWR"]
+DEFAULT_AIRPORTS = ["ATL", "DFW", "DEN", "ORD", "LAX", "JFK", "CLT", "LAS", "MCO", "MIA", "LGA", "EWR", "IAD", "SFO", "SEA", "PHX", "IAH", "BOS"]
 
 # Patterns used for extracting explicit wait times from text (for display only)
 WAIT_TIME_PATTERNS = [
@@ -1078,13 +1089,17 @@ def run_single_airport(airport, terminal, hours, output_dir=None, archive_base=N
         "last_run": datetime.now(timezone.utc).isoformat(),
     }
 
-    print("  Searching Reddit posts...", file=sys.stderr)
-    reddit_posts = search_reddit(airport, terminal, hours)
-    stats["reddit_posts"] = len(reddit_posts)
-
-    print("  Searching Reddit comments...", file=sys.stderr)
-    reddit_comments = search_reddit_comments(airport, terminal, hours)
-    stats["reddit_comments"] = len(reddit_comments)
+    # Reddit API access is currently blocked (403/429) — disabled until resolved
+    # print("  Searching Reddit posts...", file=sys.stderr)
+    # reddit_posts = search_reddit(airport, terminal, hours)
+    # stats["reddit_posts"] = len(reddit_posts)
+    # print("  Searching Reddit comments...", file=sys.stderr)
+    # reddit_comments = search_reddit_comments(airport, terminal, hours)
+    # stats["reddit_comments"] = len(reddit_comments)
+    reddit_posts = []
+    reddit_comments = []
+    stats["reddit_posts"] = 0
+    stats["reddit_comments"] = 0
 
     print("  Searching Bluesky...", file=sys.stderr)
     bluesky_posts = search_bluesky(airport, terminal, hours)

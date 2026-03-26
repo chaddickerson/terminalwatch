@@ -22,7 +22,7 @@ jobs:
 
       - name: Archive current reports
         run: |
-          for code in atl dfw den ord lax jfk clt las mco mia lga ewr; do
+          for code in atl dfw den ord lax jfk clt las mco mia lga ewr iad sfo sea phx iah bos; do
             if [ -f "${code}/index.html" ]; then
               # Use the git commit time of the file to get the actual report generation time
               ARCHIVE_TS=$(git log -1 --format="%at" -- "${code}/index.html" 2>/dev/null || true)
