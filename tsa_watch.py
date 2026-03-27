@@ -863,7 +863,7 @@ def format_html(results, airport_code, terminal=None, summary_html=None, archive
 </ul>
 </div>
 <div style="background: #fff3cd; border: 2px solid #ffc107; border-radius: 8px; padding: 12px 16px; margin: 12px 0; font-size: 0.95em;">
-<strong>&#128227; Want to help?</strong> I am trying to integrate Reddit content but my initial application for an API key was quickly denied, presumably via an automated system. If you can help me get a Reddit API key (or have other ideas for sources available via API), email me at hello at chaddickerson.com!
+<strong>&#128227; Want to help?</strong> If you know anyone at Reddit who can help me get an API key (my application was denied) email me at hello at chaddickerson.com!
 </div>
 """
 
@@ -1089,7 +1089,7 @@ def generate_landing_page(output_dir, airport_stats):
 </ul>
 </div>
 <div style="background: #fff3cd; border: 2px solid #ffc107; border-radius: 8px; padding: 12px 16px; margin: 12px 0; font-size: 0.95em;">
-<strong>&#128227; Want to help?</strong> I am trying to integrate Reddit content but my initial application for an API key was quickly denied, presumably via an automated system. If you can help me get a Reddit API key (or have other ideas for sources available via API), email me at hello at chaddickerson.com!
+<strong>&#128227; Want to help?</strong> If you know anyone at Reddit who can help me get an API key (my application was denied) email me at hello at chaddickerson.com!
 </div>
 <div class="grid">
 {"".join(cards)}
