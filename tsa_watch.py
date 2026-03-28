@@ -320,11 +320,76 @@ def _request(url, headers=None):
         return None
 
 
+_reddit_token_cache = {"token": None, "expires_at": 0}
+
+
+def _reddit_auth_headers():
+    """Get Reddit OAuth2 bearer token using client credentials flow.
+
+    Requires REDDIT_CLIENT_ID and REDDIT_CLIENT_SECRET env vars.
+    Returns auth headers dict, or None if credentials are not set.
+    Tokens are cached and reused until they expire.
+    """
+    import base64
+    import time
+
+    client_id = os.environ.get("REDDIT_CLIENT_ID", "")
+    client_secret = os.environ.get("REDDIT_CLIENT_SECRET", "")
+    if not client_id or not client_secret:
+        return None
+
+    # Return cached token if still valid (with 60s buffer)
+    if _reddit_token_cache["token"] and time.time() < _reddit_token_cache["expires_at"] - 60:
+        return {
+            "Authorization": f"bearer {_reddit_token_cache['token']}",
+            "User-Agent": "tsa-watch/1.0 (by /u/terminalwatch)",
+        }
+
+    # Request new token
+    creds = base64.b64encode(f"{client_id}:{client_secret}".encode()).decode()
+    data = urllib.parse.urlencode({"grant_type": "client_credentials"}).encode()
+    req = urllib.request.Request(
+        "https://www.reddit.com/api/v1/access_token",
+        data=data,
+        headers={
+            "Authorization": f"Basic {creds}",
+            "User-Agent": "tsa-watch/1.0 (by /u/terminalwatch)",
+            "Content-Type": "application/x-www-form-urlencoded",
+        },
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            body = json.loads(resp.read().decode())
+        token = body.get("access_token")
+        if not token:
+            print("  [warn] Reddit OAuth: no access_token in response", file=sys.stderr)
+            return None
+        _reddit_token_cache["token"] = token
+        _reddit_token_cache["expires_at"] = time.time() + body.get("expires_in", 3600)
+        return {
+            "Authorization": f"bearer {token}",
+            "User-Agent": "tsa-watch/1.0 (by /u/terminalwatch)",
+        }
+    except (urllib.error.URLError, urllib.error.HTTPError, json.JSONDecodeError) as e:
+        print(f"  [warn] Reddit OAuth failed: {e}", file=sys.stderr)
+        return None
+
+
 def search_reddit(airport_code, terminal=None, hours=24):
-    """Search Reddit for recent TSA/airport posts."""
+    """Search Reddit for recent TSA/airport posts.
+
+    Uses OAuth2 API (oauth.reddit.com) if REDDIT_CLIENT_ID and
+    REDDIT_CLIENT_SECRET are set. Otherwise falls back to the public
+    JSON endpoint (which is heavily rate-limited).
+    """
     results = []
     names = AIRPORT_NAMES.get(airport_code, [airport_code])
     cutoff = datetime.now(timezone.utc) - timedelta(hours=hours)
+
+    auth_headers = _reddit_auth_headers()
+    base_url = "https://oauth.reddit.com" if auth_headers else "https://www.reddit.com"
+    suffix = "" if auth_headers else ".json"
 
     # Combine general subs with airport-specific local subs
     all_subs = list(SUBREDDITS) + AIRPORT_SUBREDDITS.get(airport_code, [])
@@ -341,10 +406,10 @@ def search_reddit(airport_code, terminal=None, hours=24):
           for q_template in ["{name} TSA security", "{name} security line", "{name} security wait"]:
             query = urllib.parse.quote(q_template.format(name=name))
             url = (
-                f"https://www.reddit.com/r/{subreddit}/search.json"
+                f"{base_url}/r/{subreddit}/search{suffix}"
                 f"?q={query}&sort=new&restrict_sr=on&t=week&limit=25"
             )
-            data = _request(url)
+            data = _request(url, headers=auth_headers)
             if not data or "data" not in data:
                 continue
 
@@ -388,19 +453,27 @@ def search_reddit(airport_code, terminal=None, hours=24):
 
 
 def search_reddit_comments(airport_code, terminal=None, hours=24):
-    """Search Reddit comments (via search API) for more granular reports."""
+    """Search Reddit comments for more granular reports.
+
+    Uses OAuth2 API if credentials are set, otherwise falls back
+    to the public JSON endpoint.
+    """
     results = []
     names = AIRPORT_NAMES.get(airport_code, [airport_code])
     cutoff = datetime.now(timezone.utc) - timedelta(hours=hours)
+
+    auth_headers = _reddit_auth_headers()
+    base_url = "https://oauth.reddit.com" if auth_headers else "https://www.reddit.com"
+    suffix = "" if auth_headers else ".json"
 
     for name in names[:2]:
       for q_template in ["{name} TSA wait", "{name} security wait", "{name} security line"]:
         query = urllib.parse.quote(q_template.format(name=name))
         url = (
-            f"https://www.reddit.com/search.json"
+            f"{base_url}/search{suffix}"
             f"?q={query}&sort=new&type=comment&t=week&limit=25"
         )
-        data = _request(url)
+        data = _request(url, headers=auth_headers)
         if not data or "data" not in data:
             continue
 
@@ -1119,17 +1192,19 @@ def run_single_airport(airport, terminal, hours, output_dir=None, archive_base=N
         "last_run": datetime.now(timezone.utc).isoformat(),
     }
 
-    # Reddit API access is currently blocked (403/429) — disabled until resolved
-    # print("  Searching Reddit posts...", file=sys.stderr)
-    # reddit_posts = search_reddit(airport, terminal, hours)
-    # stats["reddit_posts"] = len(reddit_posts)
-    # print("  Searching Reddit comments...", file=sys.stderr)
-    # reddit_comments = search_reddit_comments(airport, terminal, hours)
-    # stats["reddit_comments"] = len(reddit_comments)
-    reddit_posts = []
-    reddit_comments = []
-    stats["reddit_posts"] = 0
-    stats["reddit_comments"] = 0
+    # Reddit: enabled when REDDIT_CLIENT_ID and REDDIT_CLIENT_SECRET are set
+    if os.environ.get("REDDIT_CLIENT_ID") and os.environ.get("REDDIT_CLIENT_SECRET"):
+        print("  Searching Reddit posts...", file=sys.stderr)
+        reddit_posts = search_reddit(airport, terminal, hours)
+        stats["reddit_posts"] = len(reddit_posts)
+        print("  Searching Reddit comments...", file=sys.stderr)
+        reddit_comments = search_reddit_comments(airport, terminal, hours)
+        stats["reddit_comments"] = len(reddit_comments)
+    else:
+        reddit_posts = []
+        reddit_comments = []
+        stats["reddit_posts"] = 0
+        stats["reddit_comments"] = 0
 
     print("  Searching Bluesky...", file=sys.stderr)
     bluesky_posts = search_bluesky(airport, terminal, hours)
