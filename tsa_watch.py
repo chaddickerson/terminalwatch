@@ -935,9 +935,6 @@ def format_html(results, airport_code, terminal=None, summary_html=None, archive
 <li>"Security at JFK Terminal 4 is insane right now, been waiting 45 min"</li>
 </ul>
 </div>
-<div style="background: #fff3cd; border: 2px solid #ffc107; border-radius: 8px; padding: 12px 16px; margin: 12px 0; font-size: 0.95em;">
-<strong>&#128227; Want to help?</strong> If you know anyone at Reddit who can help me get an API key (my application was denied) email me at hello at chaddickerson.com!
-</div>
 """
 
     # Archive links — last 24 hours only, grouped by date
@@ -1160,9 +1157,6 @@ def generate_landing_page(output_dir, airport_stats):
 <li>"PreCheck at DEN Terminal A took 10 minutes this morning, not bad"</li>
 <li>"Security at JFK Terminal 4 is insane right now, been waiting 45 min"</li>
 </ul>
-</div>
-<div style="background: #fff3cd; border: 2px solid #ffc107; border-radius: 8px; padding: 12px 16px; margin: 12px 0; font-size: 0.95em;">
-<strong>&#128227; Want to help?</strong> If you know anyone at Reddit who can help me get an API key (my application was denied) email me at hello at chaddickerson.com!
 </div>
 <div class="grid">
 {"".join(cards)}
