@@ -1,9 +1,9 @@
 {
-  "last_run": "2026-04-09T10:41:09.537501+00:00",
+  "last_run": "2026-04-09T11:36:05.979578+00:00",
   "airports": {
     "ATL": {
       "airport": "ATL",
-      "last_run": "2026-04-09T10:39:34.738033+00:00",
+      "last_run": "2026-04-09T11:34:12.620017+00:00",
       "reddit_posts": 0,
       "reddit_comments": 0,
       "bluesky": 4,
@@ -13,7 +13,7 @@
     },
     "BOS": {
       "airport": "BOS",
-      "last_run": "2026-04-09T10:39:42.129767+00:00",
+      "last_run": "2026-04-09T11:34:19.756967+00:00",
       "reddit_posts": 0,
       "reddit_comments": 0,
       "bluesky": 2,
@@ -23,7 +23,7 @@
     },
     "CLT": {
       "airport": "CLT",
-      "last_run": "2026-04-09T10:39:48.103606+00:00",
+      "last_run": "2026-04-09T11:34:25.840507+00:00",
       "reddit_posts": 0,
       "reddit_comments": 0,
       "bluesky": 0,
@@ -33,27 +33,27 @@
     },
     "DEN": {
       "airport": "DEN",
-      "last_run": "2026-04-09T10:39:53.058786+00:00",
+      "last_run": "2026-04-09T11:34:30.866922+00:00",
       "reddit_posts": 0,
       "reddit_comments": 0,
-      "bluesky": 0,
+      "bluesky": 1,
       "twitter": 40,
-      "total_raw": 40,
-      "after_llm_filter": 1
+      "total_raw": 41,
+      "after_llm_filter": 2
     },
     "DFW": {
       "airport": "DFW",
-      "last_run": "2026-04-09T10:39:58.518925+00:00",
+      "last_run": "2026-04-09T11:34:37.055694+00:00",
       "reddit_posts": 0,
       "reddit_comments": 0,
       "bluesky": 0,
-      "twitter": 11,
-      "total_raw": 11,
-      "after_llm_filter": 3
+      "twitter": 10,
+      "total_raw": 10,
+      "after_llm_filter": 2
     },
     "EWR": {
       "airport": "EWR",
-      "last_run": "2026-04-09T10:40:05.178737+00:00",
+      "last_run": "2026-04-09T11:34:42.999385+00:00",
       "reddit_posts": 0,
       "reddit_comments": 0,
       "bluesky": 3,
@@ -63,17 +63,17 @@
     },
     "IAD": {
       "airport": "IAD",
-      "last_run": "2026-04-09T10:40:11.763752+00:00",
+      "last_run": "2026-04-09T11:34:49.432866+00:00",
       "reddit_posts": 0,
       "reddit_comments": 0,
       "bluesky": 2,
-      "twitter": 10,
-      "total_raw": 12,
+      "twitter": 9,
+      "total_raw": 11,
       "after_llm_filter": 2
     },
     "IAH": {
       "airport": "IAH",
-      "last_run": "2026-04-09T10:40:15.843300+00:00",
+      "last_run": "2026-04-09T11:34:54.297190+00:00",
       "reddit_posts": 0,
       "reddit_comments": 0,
       "bluesky": 0,
@@ -83,37 +83,37 @@
     },
     "JFK": {
       "airport": "JFK",
-      "last_run": "2026-04-09T10:40:20.912758+00:00",
+      "last_run": "2026-04-09T11:35:00.087921+00:00",
       "reddit_posts": 0,
       "reddit_comments": 0,
-      "bluesky": 0,
+      "bluesky": 7,
       "twitter": 47,
-      "total_raw": 47,
-      "after_llm_filter": 2
+      "total_raw": 54,
+      "after_llm_filter": 4
     },
     "LAS": {
       "airport": "LAS",
-      "last_run": "2026-04-09T10:40:26.443445+00:00",
+      "last_run": "2026-04-09T11:35:07.738228+00:00",
       "reddit_posts": 0,
       "reddit_comments": 0,
-      "bluesky": 0,
+      "bluesky": 2,
       "twitter": 26,
-      "total_raw": 26,
-      "after_llm_filter": 0
+      "total_raw": 28,
+      "after_llm_filter": 3
     },
     "LAX": {
       "airport": "LAX",
-      "last_run": "2026-04-09T10:40:31.665219+00:00",
+      "last_run": "2026-04-09T11:35:14.430341+00:00",
       "reddit_posts": 0,
       "reddit_comments": 0,
-      "bluesky": 3,
+      "bluesky": 4,
       "twitter": 50,
-      "total_raw": 53,
+      "total_raw": 54,
       "after_llm_filter": 3
     },
     "LGA": {
       "airport": "LGA",
-      "last_run": "2026-04-09T10:40:37.348496+00:00",
+      "last_run": "2026-04-09T11:35:22.014638+00:00",
       "reddit_posts": 0,
       "reddit_comments": 0,
       "bluesky": 2,
@@ -123,27 +123,27 @@
     },
     "MCO": {
       "airport": "MCO",
-      "last_run": "2026-04-09T10:40:41.506666+00:00",
+      "last_run": "2026-04-09T11:35:28.631243+00:00",
       "reddit_posts": 0,
       "reddit_comments": 0,
-      "bluesky": 1,
-      "twitter": 20,
-      "total_raw": 21,
-      "after_llm_filter": 3
+      "bluesky": 4,
+      "twitter": 21,
+      "total_raw": 25,
+      "after_llm_filter": 4
     },
     "MIA": {
       "airport": "MIA",
-      "last_run": "2026-04-09T10:40:46.291072+00:00",
+      "last_run": "2026-04-09T11:35:35.309981+00:00",
       "reddit_posts": 0,
       "reddit_comments": 0,
-      "bluesky": 0,
+      "bluesky": 1,
       "twitter": 36,
-      "total_raw": 36,
+      "total_raw": 37,
       "after_llm_filter": 3
     },
     "ORD": {
       "airport": "ORD",
-      "last_run": "2026-04-09T10:40:51.529891+00:00",
+      "last_run": "2026-04-09T11:35:43.489317+00:00",
       "reddit_posts": 0,
       "reddit_comments": 0,
       "bluesky": 2,
@@ -153,7 +153,7 @@
     },
     "PHX": {
       "airport": "PHX",
-      "last_run": "2026-04-09T10:40:56.048076+00:00",
+      "last_run": "2026-04-09T11:35:48.894369+00:00",
       "reddit_posts": 0,
       "reddit_comments": 0,
       "bluesky": 0,
@@ -163,7 +163,7 @@
     },
     "SEA": {
       "airport": "SEA",
-      "last_run": "2026-04-09T10:40:59.828142+00:00",
+      "last_run": "2026-04-09T11:35:53.878694+00:00",
       "reddit_posts": 0,
       "reddit_comments": 0,
       "bluesky": 0,
@@ -173,13 +173,13 @@
     },
     "SFO": {
       "airport": "SFO",
-      "last_run": "2026-04-09T10:41:04.666505+00:00",
+      "last_run": "2026-04-09T11:35:59.619332+00:00",
       "reddit_posts": 0,
       "reddit_comments": 0,
-      "bluesky": 0,
+      "bluesky": 3,
       "twitter": 36,
-      "total_raw": 36,
-      "after_llm_filter": 2
+      "total_raw": 39,
+      "after_llm_filter": 4
     }
   }
 }
