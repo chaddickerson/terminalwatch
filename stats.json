@@ -1,29 +1,29 @@
 {
-  "last_run": "2026-04-09T05:01:00.990778+00:00",
+  "last_run": "2026-04-09T05:53:48.534057+00:00",
   "airports": {
     "ATL": {
       "airport": "ATL",
-      "last_run": "2026-04-09T04:59:31.433359+00:00",
+      "last_run": "2026-04-09T05:52:16.207589+00:00",
       "reddit_posts": 0,
       "reddit_comments": 0,
       "bluesky": 5,
-      "twitter": 44,
-      "total_raw": 49,
-      "after_llm_filter": 7
+      "twitter": 45,
+      "total_raw": 50,
+      "after_llm_filter": 9
     },
     "BOS": {
       "airport": "BOS",
-      "last_run": "2026-04-09T04:59:37.952467+00:00",
+      "last_run": "2026-04-09T05:52:23.310465+00:00",
       "reddit_posts": 0,
       "reddit_comments": 0,
-      "bluesky": 3,
+      "bluesky": 2,
       "twitter": 30,
-      "total_raw": 33,
+      "total_raw": 32,
       "after_llm_filter": 2
     },
     "CLT": {
       "airport": "CLT",
-      "last_run": "2026-04-09T04:59:43.725522+00:00",
+      "last_run": "2026-04-09T05:52:28.481359+00:00",
       "reddit_posts": 0,
       "reddit_comments": 0,
       "bluesky": 1,
@@ -33,7 +33,7 @@
     },
     "DEN": {
       "airport": "DEN",
-      "last_run": "2026-04-09T04:59:48.820884+00:00",
+      "last_run": "2026-04-09T05:52:32.437063+00:00",
       "reddit_posts": 0,
       "reddit_comments": 0,
       "bluesky": 0,
@@ -43,7 +43,7 @@
     },
     "DFW": {
       "airport": "DFW",
-      "last_run": "2026-04-09T04:59:54.205757+00:00",
+      "last_run": "2026-04-09T05:52:37.472448+00:00",
       "reddit_posts": 0,
       "reddit_comments": 0,
       "bluesky": 0,
@@ -53,27 +53,27 @@
     },
     "EWR": {
       "airport": "EWR",
-      "last_run": "2026-04-09T04:59:59.927553+00:00",
+      "last_run": "2026-04-09T05:52:42.369344+00:00",
       "reddit_posts": 0,
       "reddit_comments": 0,
-      "bluesky": 1,
-      "twitter": 14,
+      "bluesky": 0,
+      "twitter": 15,
       "total_raw": 15,
       "after_llm_filter": 2
     },
     "IAD": {
       "airport": "IAD",
-      "last_run": "2026-04-09T05:00:03.755364+00:00",
+      "last_run": "2026-04-09T05:52:46.153879+00:00",
       "reddit_posts": 0,
       "reddit_comments": 0,
-      "bluesky": 2,
+      "bluesky": 0,
       "twitter": 9,
-      "total_raw": 11,
-      "after_llm_filter": 2
+      "total_raw": 9,
+      "after_llm_filter": 1
     },
     "IAH": {
       "airport": "IAH",
-      "last_run": "2026-04-09T05:00:07.511813+00:00",
+      "last_run": "2026-04-09T05:52:50.511978+00:00",
       "reddit_posts": 0,
       "reddit_comments": 0,
       "bluesky": 0,
@@ -83,7 +83,7 @@
     },
     "JFK": {
       "airport": "JFK",
-      "last_run": "2026-04-09T05:00:11.660246+00:00",
+      "last_run": "2026-04-09T05:52:55.293464+00:00",
       "reddit_posts": 0,
       "reddit_comments": 0,
       "bluesky": 0,
@@ -93,93 +93,93 @@
     },
     "LAS": {
       "airport": "LAS",
-      "last_run": "2026-04-09T05:00:16.850314+00:00",
+      "last_run": "2026-04-09T05:53:01.325375+00:00",
       "reddit_posts": 0,
       "reddit_comments": 0,
-      "bluesky": 0,
+      "bluesky": 2,
       "twitter": 26,
-      "total_raw": 26,
-      "after_llm_filter": 1
+      "total_raw": 28,
+      "after_llm_filter": 0
     },
     "LAX": {
       "airport": "LAX",
-      "last_run": "2026-04-09T05:00:22.517415+00:00",
+      "last_run": "2026-04-09T05:53:04.025892+00:00",
       "reddit_posts": 0,
       "reddit_comments": 0,
-      "bluesky": 0,
+      "bluesky": 3,
       "twitter": 50,
-      "total_raw": 50,
+      "total_raw": 53,
       "after_llm_filter": 3
     },
     "LGA": {
       "airport": "LGA",
-      "last_run": "2026-04-09T05:00:27.111743+00:00",
+      "last_run": "2026-04-09T05:53:10.287480+00:00",
       "reddit_posts": 0,
       "reddit_comments": 0,
-      "bluesky": 0,
-      "twitter": 11,
-      "total_raw": 11,
+      "bluesky": 3,
+      "twitter": 12,
+      "total_raw": 15,
       "after_llm_filter": 4
     },
     "MCO": {
       "airport": "MCO",
-      "last_run": "2026-04-09T05:00:32.054387+00:00",
+      "last_run": "2026-04-09T05:53:15.808479+00:00",
       "reddit_posts": 0,
       "reddit_comments": 0,
-      "bluesky": 0,
+      "bluesky": 4,
       "twitter": 22,
-      "total_raw": 22,
+      "total_raw": 26,
       "after_llm_filter": 5
     },
     "MIA": {
       "airport": "MIA",
-      "last_run": "2026-04-09T05:00:38.059261+00:00",
+      "last_run": "2026-04-09T05:53:23.715217+00:00",
       "reddit_posts": 0,
       "reddit_comments": 0,
-      "bluesky": 0,
+      "bluesky": 1,
       "twitter": 36,
-      "total_raw": 36,
+      "total_raw": 37,
       "after_llm_filter": 3
     },
     "ORD": {
       "airport": "ORD",
-      "last_run": "2026-04-09T05:00:42.591034+00:00",
+      "last_run": "2026-04-09T05:53:29.762593+00:00",
       "reddit_posts": 0,
       "reddit_comments": 0,
-      "bluesky": 0,
+      "bluesky": 2,
       "twitter": 6,
-      "total_raw": 6,
-      "after_llm_filter": 0
+      "total_raw": 8,
+      "after_llm_filter": 1
     },
     "PHX": {
       "airport": "PHX",
-      "last_run": "2026-04-09T05:00:43.840157+00:00",
+      "last_run": "2026-04-09T05:53:34.602909+00:00",
       "reddit_posts": 0,
       "reddit_comments": 0,
-      "bluesky": 0,
-      "twitter": 9,
-      "total_raw": 9,
+      "bluesky": 1,
+      "twitter": 10,
+      "total_raw": 11,
       "after_llm_filter": 1
     },
     "SEA": {
       "airport": "SEA",
-      "last_run": "2026-04-09T05:00:46.719059+00:00",
+      "last_run": "2026-04-09T05:53:38.857960+00:00",
       "reddit_posts": 0,
       "reddit_comments": 0,
-      "bluesky": 0,
+      "bluesky": 4,
       "twitter": 49,
-      "total_raw": 49,
-      "after_llm_filter": 2
+      "total_raw": 53,
+      "after_llm_filter": 1
     },
     "SFO": {
       "airport": "SFO",
-      "last_run": "2026-04-09T05:00:51.564112+00:00",
+      "last_run": "2026-04-09T05:53:43.752839+00:00",
       "reddit_posts": 0,
       "reddit_comments": 0,
-      "bluesky": 0,
+      "bluesky": 3,
       "twitter": 36,
-      "total_raw": 36,
-      "after_llm_filter": 3
+      "total_raw": 39,
+      "after_llm_filter": 4
     }
   }
 }
