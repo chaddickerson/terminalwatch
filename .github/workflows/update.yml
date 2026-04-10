@@ -1,10 +1,10 @@
 name: Update TSA wait times
 
 on:
-  schedule:
-    # Run every hour at :15
-    - cron: '15 * * * *'
-  workflow_dispatch: # Allow manual trigger
+  # schedule:
+  #   # Run every hour at :15
+  #   - cron: '15 * * * *'
+  workflow_dispatch: # Allow manual trigger (kept for re-enabling)
 
 permissions:
   contents: write
